@@ -42,28 +42,5 @@ return array(
                 )
             )
         )
-    ),
-
-    // 'services' => array(
-    //     'events' => array(
-    //         'mautic.plugin.allydemautic.userbundle.subscriber' => array(
-    //             'class' => 'MauticPlugin\AllydeMauticBundle\EventListener\UserSubscriber',
-    //             'arguments' => array(
-    //                 'security.password_encoder',
-    //                 'templating',
-    //                 'mautic.helper.cookie',
-    //                 'mautic.helper.integration',
-    //                 'router',
-    //                 'mautic.security'
-    //             )
-    //         ),
-    //         'mautic.plugin.allydemautic.menu.subscriber' => array(
-    //             'class' => 'MauticPlugin\AllydeMauticBundle\EventListener\MenuSubscriber',
-    //             'arguments' => array(
-    //                 'router',
-    //                 'session'
-    //             )
-    //         )
-    //     )
-    // )
+    )
 );
