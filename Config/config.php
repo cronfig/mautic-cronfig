@@ -19,6 +19,15 @@ return array(
                 'path'       => '/cronfig',
                 'controller' => 'CronfigBundle:Cronfig:index'
             )
+        ),
+        'public' => array(
+            'cronfig_public' => array(
+                'path' => '/cronfig/{command}',
+                'controller' => 'CronfigBundle:Public:trigger',
+                'defaults' => array(
+                    'command' => ''
+                )
+            )
         )
     ),
 

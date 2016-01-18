@@ -18,9 +18,9 @@ use Mautic\CoreBundle\Controller\CommonController;
 class CronfigController extends CommonController
 {
     /*
-     * @param int $page
+     * Display the Cronfig Login/Dashboard
      */
-    public function indexAction($page = 1)
+    public function indexAction()
     {
         return $this->delegateView(array(
             'viewParameters'  => array(
