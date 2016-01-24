@@ -17,19 +17,19 @@ $view['slots']->set('headerTitle', $view['translator']->trans('cronfig.title'));
 <!--[if lt IE 8]>
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
-<div id="cronfig-wrapper">
+<div id="cronfig-wrapper" class="col-md-12">
     <p>If you can see this, something is broken (or JS is not enabled)!!.</p>
 </div>
 <script type="text/javascript">
     document.cronfigConfig = {
         platform: 'mautic',
         tasks: <?php echo json_encode($commands) ?>,
-        email: 'linhartescope@gmail.com',
-        apiKey: '5676b7c7ea58d79d53d14adb',
+        email: '<?php echo $email ?>',
+        apiKey: '',
         rememberApiKey: function(apiKey) {
-            console.log(apiKey);
-        },
-        env: 'dev'
+            // @todo save the api key to the integrations table
+            // console.log(apiKey);
+        }
     }
 </script>
-<script type="text/javascript" src="http://localhost/cronfig-app/dist/assets/main.js"></script>
+<script type="text/javascript" src="//cdn.cronfig.io/cronfig.js"></script>
