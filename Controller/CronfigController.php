@@ -26,11 +26,13 @@ class CronfigController extends CommonController
         $commands = $model->getCommands();
         $baseUrl = $this->generateUrl('mautic_base_index', array(), true);
         $commandsWithUrls = $model->getCommandsUrls($commands, $baseUrl);
+        $email = $this->factory->getUser()->getEmail();
 
         return $this->delegateView(array(
             'viewParameters'  => array(
                 'title' => 'cronfig.title',
-                'commands' => $commandsWithUrls
+                'commands' => $commandsWithUrls,
+                'email' => $email
             ),
             'contentTemplate' => 'CronfigBundle:Cronfig:index.html.php',
             'passthroughVars' => array(
