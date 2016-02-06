@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
+use FOS\RestBundle\Util\Codes;
 
 /**
  * Class PublicController
@@ -26,39 +27,46 @@ class PublicController extends CommonController
      */
     public function triggerAction($command)
     {
-        $command = explode(' ', urldecode($command));
-        $errorCount = $this->request->get('errorCount', 0);
-        $args = array_merge(array('console'), $command);
-
-        $response = new Response();
+        $response  = new Response();
         $response->headers->set('Content-Type', 'text/plain');
+        $secretKey = $this->request->query->get('secret_key');
+        $config    = $this->factory->getParameter('cronfig');
 
-        if ($errorCount > 2) {
-            // Try to force the command if it failed 2 times before
-            $args[] = '--force';
-        }
+        if (isset($config['secret_key']) && $config['secret_key'] !== $secretKey) {
+            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $output = 'error: access forbidden';
+        } else {
+            $command = explode(' ', urldecode($command));
+            $errorCount = $this->request->get('error_count', 0);
+            $args = array_merge(array('console'), $command);
 
-        try {
-            $input  = new ArgvInput($args);
-            $output = new BufferedOutput();
-            $app    = new Application($this->get('kernel'));
-            $app->setAutoExit(false);
-            $result = $app->run($input, $output);
-            $output = $output->fetch();
-        } catch (\Exception $exception) {
-            $output = $exception->getMessage();
-            $response->setStatusCode(500);
-        }
+            if ($errorCount > 2) {
+                // Try to force the command if it failed 2 times before
+                $args[] = '--force';
+            }
 
-        // Guess that the output is an error message
-        $errorWords = array('--force', 'exception');
-
-        foreach ($errorWords as $errorWord) {
-            if (strpos($output, $errorWord) !== false) {
+            try {
+                $input  = new ArgvInput($args);
+                $output = new BufferedOutput();
+                $app    = new Application($this->get('kernel'));
+                $app->setAutoExit(false);
+                $result = $app->run($input, $output);
+                $output = $output->fetch();
+            } catch (\Exception $exception) {
+                $output = $exception->getMessage();
                 $response->setStatusCode(500);
             }
+
+            // Guess that the output is an error message
+            $errorWords = array('--force', 'exception');
+
+            foreach ($errorWords as $errorWord) {
+                if (strpos($output, $errorWord) !== false) {
+                    $response->setStatusCode(500);
+                }
+            }
         }
-        
+
         $response->setContent($output);
 
         return $response;
