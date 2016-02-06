@@ -42,10 +42,16 @@ class CronfigModel extends CommonModel
     public function getCommandsUrls($commands, $baseUrl)
     {
         $commandsWithUrls = array();
+        $config = $this->factory->getParameter('cronfig');
+        $secretKey = '';
+
+        if (isset($config['secret_key'])) {
+            $secretKey = '?secret_key=' . $config['secret_key'];
+        }
 
         foreach ($commands as $command => $desc) {
             $commandsWithUrls[] = array(
-                'url' => $baseUrl . 'cronfig/' . urlencode($command),
+                'url' => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
                 'title' => $desc['title'],
                 'description' => $desc['description']
             );    
