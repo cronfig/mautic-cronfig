@@ -22,8 +22,8 @@ echo $view['assets']->includeStylesheet('plugins/CronfigBundle/Assets/css/cronfi
 <div id="cronfig-wrapper" class="col-md-12">
     <img 
         class="loading" 
-        src="<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/images/ring.svg'); ?>" 
-        onerror="this.src='<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/images/ring.gif'); ?>'; this.onerror=null;" 
+        src="<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.svg'); ?>" 
+        onerror="this.src='<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.gif'); ?>'; this.onerror=null;" 
         alt="loading..." />
 </div>
 <script type="text/javascript">
