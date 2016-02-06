@@ -37,7 +37,7 @@ return array(
                 'cronfig.title' => array(
                     'id'        => 'cronfig',
                     'route'     => 'cronfig',
-                    'iconClass' => 'fa-share-alt',
+                    'iconClass' => 'fa-clock-o',
                     // 'access'    => 'plugin:cronfig:cronfig:view',
                 )
             )
