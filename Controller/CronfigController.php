@@ -22,17 +22,24 @@ class CronfigController extends CommonController
      */
     public function indexAction()
     {
-        $model = $this->factory->getModel('plugin.cronfig.cronfig');
-        $commands = $model->getCommands();
-        $baseUrl = $this->generateUrl('mautic_base_index', array(), true);
-        $commandsWithUrls = $model->getCommandsUrls($commands, $baseUrl);
-        $email = $this->factory->getUser()->getEmail();
+        $model              = $this->factory->getModel('plugin.cronfig.cronfig');
+        $commands           = $model->getCommands();
+        $baseUrl            = $this->generateUrl('mautic_base_index', array(), true);
+        $commandsWithUrls   = $model->getCommandsUrls($commands, $baseUrl);
+        $email              = $this->factory->getUser()->getEmail();
+        $config             = $this->factory->getParameter('cronfig');
+        $apiKey             = '';
+
+        if (isset($config['api_key'])) {
+            $apiKey = $config['api_key'];
+        }
 
         return $this->delegateView(array(
-            'viewParameters'  => array(
-                'title' => 'cronfig.title',
-                'commands' => $commandsWithUrls,
-                'email' => $email
+            'viewParameters'    => array(
+                'title'         => 'cronfig.title',
+                'commands'      => $commandsWithUrls,
+                'email'         => $email,
+                'apiKey'        => $apiKey,
             ),
             'contentTemplate' => 'CronfigBundle:Cronfig:index.html.php',
             'passthroughVars' => array(
