@@ -25,10 +25,15 @@ $view['slots']->set('headerTitle', $view['translator']->trans('cronfig.title'));
         platform: 'mautic',
         tasks: <?php echo json_encode($commands) ?>,
         email: '<?php echo $email ?>',
-        apiKey: '',
+        apiKey: '<?php echo $apiKey ?>',
         rememberApiKey: function(apiKey) {
-            // @todo save the api key to the integrations table
-            // console.log(apiKey);
+            Mautic.ajaxActionRequest('plugin:cronfig:saveApiKey', 'apiKey=' + apiKey, function(response) {
+                if (typeof response.secret_key !== 'undefined') {
+                    for (var i = 0; i < document.cronfigConfig.tasks.length; i++) {
+                        document.cronfigConfig.tasks[i].url += '?secret_key=' + response.secret_key;
+                    }
+                }
+            }, true);
         }
     }
 </script>
