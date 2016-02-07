@@ -4,7 +4,7 @@ This plugin will add a new menu item to the right hand side Mautic menu called *
 
 ## Installation
 
-1. Download the plugin.
+1. [Download](https://cronfig.mautic.com/asset/1:mautic-cronfig-plugin) the plugin.
 2. Unzip the downloaded package.
 3. Upload the unzipped folder to the `plugins` folder. Make sure the plugin folder is also correctly named: `plugins/CronfigBundle`.
 4. Clear Mautic's cache. Either run `app/console cache:clear` command in the Mautic's root dir or simply delete the content of `app/cache` dir.
@@ -16,4 +16,4 @@ This plugin will add a new menu item to the right hand side Mautic menu called *
 
 ## Create the cron tasks
 
-Mautic plugin prepared the cron tasks for you. Just allow the ones you want. The Free account lets you run the required Mautic tasks for free for unlimited time. Check the pricing page for more details. 
+Mautic plugin prepared the cron tasks for you. Just allow the ones you want. The Free account lets you run the required Mautic tasks for free for unlimited time. Check the [official website](https://cronfig.io/) for more details. 
