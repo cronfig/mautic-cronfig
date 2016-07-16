@@ -9,12 +9,12 @@
 
 namespace MauticPlugin\CronfigBundle\Model;
 
-use Mautic\CoreBundle\Model\CommonModel;
+use Mautic\CoreBundle\Model\AbstractCommonModel;
 
 /**
  * Class CronfigModel
  */
-class CronfigModel extends CommonModel
+class CronfigModel extends AbstractCommonModel
 {
 
     /**
@@ -24,14 +24,32 @@ class CronfigModel extends CommonModel
      */
     public function getCommands()
     {
-        return array(
-            'mautic:leadlists:update'       => array('title' => 'Update lists', 'description' => 'Updates the leads in the lists. This command is required for basic Mautic functions.'),
-            'mautic:campaigns:update'       => array('title' => 'Update campaigns', 'description' => 'Adds/removes leads from campaigns. This command is required for basic Mautic functions.'),
-            'mautic:campaigns:trigger'      => array('title' => 'Trigger campaigns', 'description' => 'Triggers the campaign events. This command is required for basic Mautic functions.'),
-            'mautic:email:process'          => array('title' => 'Process emails', 'description' => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.'),
-            'mautic:fetch:email'            => array('title' => 'Fetch emails', 'description' => 'Reads emails from a inbox defined in the Monitored Inbox setting.'),
-            'mautic:iplookup:download'      => array('title' => 'Update geoIP', 'description' => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.')
-        );
+        return [
+            'mautic:segments:update'   => [
+                'title'         => 'Update segments',
+                'description'   => 'Updates the contacts in the segments. This command is required for basic Mautic functions.'
+            ],
+            'mautic:campaigns:rebuild' => [
+                'title'         => 'Update campaigns',
+                'description'   => 'Adds/removes contacts from campaigns. This command is required for basic Mautic functions.'
+            ],
+            'mautic:campaigns:trigger' => [
+                'title'         => 'Trigger campaigns',
+                'description'   => 'Triggers the campaign events. This command is required for basic Mautic functions.'
+            ],
+            'mautic:emails:send'       => [
+                'title'         => 'Process emails',
+                'description'   => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.'
+            ],
+            'mautic:email:fetch'       => [
+                'title'         => 'Fetch emails',
+                'description'   => 'Reads emails from a inbox defined in the Monitored Inbox setting.'
+            ],
+            'mautic:iplookup:download' => [
+                'title'         => 'Update geoIP',
+                'description'   => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.'
+            ]
+        ];
     }
 
     /**
@@ -41,7 +59,7 @@ class CronfigModel extends CommonModel
      */
     public function getCommandsUrls($commands, $baseUrl)
     {
-        $commandsWithUrls = array();
+        $commandsWithUrls = [];
         $config = $this->factory->getParameter('cronfig');
         $secretKey = '';
 
@@ -50,11 +68,11 @@ class CronfigModel extends CommonModel
         }
 
         foreach ($commands as $command => $desc) {
-            $commandsWithUrls[] = array(
+            $commandsWithUrls[] = [
                 'url' => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
                 'title' => $desc['title'],
                 'description' => $desc['description']
-            );    
+            ];    
         }
 
         return $commandsWithUrls;

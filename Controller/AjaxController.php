@@ -29,7 +29,7 @@ class AjaxController extends CommonAjaxController
     protected function saveApiKeyAction(Request $request)
     {
         $apiKey    = InputHelper::clean($request->request->get('apiKey'));
-        $dataArray = array('success' => 0);
+        $dataArray = ['success' => 0];
 
         /** @var \Mautic\InstallBundle\Configurator\Configurator $configurator */
         $configurator = $this->get('mautic.configurator');
@@ -59,7 +59,7 @@ class AjaxController extends CommonAjaxController
                     $cacheHelper->clearContainerFile();
                 }
             } catch (\RuntimeException $exception) {
-                $this->addFlash('mautic.config.config.error.not.updated', array('%exception%' => $exception->getMessage()), 'error');
+                $this->addFlash('mautic.config.config.error.not.updated', ['%exception%' => $exception->getMessage()], 'error');
             }
         } else {
             $form->addError(new FormError(

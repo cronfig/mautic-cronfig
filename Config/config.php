@@ -7,40 +7,55 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-return array(
+return [
     'name'        => 'Cronfig',
     'description' => 'Takes care of the cron jobs - makes your Mautic alive.',
     'version'     => '1.0',
     'author'      => 'Cronfig.io',
 
-    'routes'      => array(
-        'main' => array(
-            'cronfig'         => array(
+    'routes'      => [
+        'main' => [
+            'cronfig'         => [
                 'path'       => '/cronfig',
                 'controller' => 'CronfigBundle:Cronfig:index'
-            )
-        ),
-        'public' => array(
-            'cronfig_public' => array(
+            ]
+        ],
+        'public' => [
+            'cronfig_public' => [
                 'path' => '/cronfig/{command}',
                 'controller' => 'CronfigBundle:Public:trigger',
-                'defaults' => array(
+                'defaults' => [
                     'command' => ''
-                )
-            )
-        )
-    ),
+                ]
+            ]
+        ]
+    ],
 
-    'menu'     => array(
-        'admin' => array(
-            'items'    => array(
-                'cronfig.title' => array(
+    'menu'     => [
+        'admin' => [
+            'items'    => [
+                'cronfig.title' => [
                     'id'        => 'cronfig',
                     'route'     => 'cronfig',
                     'iconClass' => 'fa-clock-o',
                     // 'access'    => 'plugin:cronfig:cronfig:view',
-                )
-            )
-        )
-    )
-);
+                ]
+            ]
+        ]
+    ],
+
+    'services' => [
+        'models' =>  [
+            'mautic.cronfig.model.cronfig' => [
+                'class' => 'MauticPlugin\CronfigBundle\Model\CronfigModel',
+                'arguments' => [
+                    'mautic.lead.model.lead',
+                    'mautic.category.model.category',
+                    'request_stack',
+                    'mautic.helper.ip_lookup',
+                    'mautic.helper.core_parameters'
+                ]
+            ]
+        ]
+    ],
+];

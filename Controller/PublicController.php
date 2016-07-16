@@ -32,13 +32,13 @@ class PublicController extends CommonController
         $secretKey = $this->request->query->get('secret_key');
         $config    = $this->factory->getParameter('cronfig');
 
-        if (isset($config['secret_key']) && $config['secret_key'] !== $secretKey) {
+        if (!isset($config['secret_key']) || $config['secret_key'] !== $secretKey) {
             $response->setStatusCode(Codes::HTTP_FORBIDDEN);
             $output = 'error: access forbidden';
         } else {
             $command = explode(' ', urldecode($command));
             $errorCount = $this->request->get('error_count', 0);
-            $args = array_merge(array('console'), $command);
+            $args = array_merge(['console'], $command);
 
             if ($errorCount > 2) {
                 // Try to force the command if it failed 2 times before
@@ -58,7 +58,7 @@ class PublicController extends CommonController
             }
 
             // Guess that the output is an error message
-            $errorWords = array('--force', 'exception');
+            $errorWords = ['--force', 'exception'];
 
             foreach ($errorWords as $errorWord) {
                 if (strpos($output, $errorWord) !== false) {
