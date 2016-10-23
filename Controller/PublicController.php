@@ -28,14 +28,19 @@ class PublicController extends CommonController
     public function triggerAction($command)
     {
         $response  = new Response();
-        $response->headers->set('Content-Type', 'text/plain');
         $secretKey = $this->request->query->get('secret_key');
         $config    = $this->factory->getParameter('cronfig');
+        $logger    = $this->get('monolog.logger.mautic');
 
-        if (!isset($config['secret_key']) || $config['secret_key'] !== $secretKey) {
+        if (!isset($config['secret_key'])) {
             $response->setStatusCode(Codes::HTTP_FORBIDDEN);
-            $output = 'error: access forbidden';
-        } else {
+            $output = 'error: secret key is missing in the configuration';
+            $logger->log('error', 'Cronfig: secret key is missing in the configuration');
+        } elseif (!$secretKey) {
+            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $output = 'error: secret key is missing in the request';
+            $logger->log('error', 'Cronfig: secret key is missing in the request');
+        } elseif ($config['secret_key'] === $secretKey) {
             $command = explode(' ', urldecode($command));
             $errorCount = $this->request->get('error_count', 0);
             $args = array_merge(['console'], $command);
@@ -55,6 +60,7 @@ class PublicController extends CommonController
             } catch (\Exception $exception) {
                 $output = $exception->getMessage();
                 $response->setStatusCode(500);
+                $logger->log('error', 'Cronfig: '.$exception->getMessage());
             }
 
             // Guess that the output is an error message
@@ -65,8 +71,13 @@ class PublicController extends CommonController
                     $response->setStatusCode(500);
                 }
             }
+        } else {
+            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $output = 'error: secret key mismatch';
+            $logger->log('error', 'Cronfig: secret key mismatch: '.$config['secret_key'].' != '.$secretKey);
         }
 
+        $response->headers->set('Content-Type', 'text/plain');
         $response->setContent($output);
 
         return $response;
