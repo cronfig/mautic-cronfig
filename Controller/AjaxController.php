@@ -47,7 +47,10 @@ class AjaxController extends CommonAjaxController
                 }
 
                 // Save the API key only if it doesn't exist or has changed
-                if (!(isset($params['cronfig']['api_key']) && $params['cronfig']['api_key'] == $apiKey)) {
+                if (!isset($params['cronfig']['api_key'])
+                    || !isset($params['cronfig']['secret_key'])
+                    || (isset($params['cronfig']['api_key']) && $params['cronfig']['api_key'] == $apiKey)
+                    || (isset($params['cronfig']['secret_key']) && $params['cronfig']['secret_key'] == $apiKey)) {
                     $configurator->mergeParameters(array('cronfig' => $cronfigConfig));
                     $configurator->write();
 
