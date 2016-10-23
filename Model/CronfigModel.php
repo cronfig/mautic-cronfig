@@ -48,6 +48,18 @@ class CronfigModel extends AbstractCommonModel
             'mautic:iplookup:download' => [
                 'title'         => 'Update geoIP',
                 'description'   => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.'
+            ],
+            'mautic:social:monitoring' => [
+                'title'         => 'Social Monitoring',
+                'description'   => 'This task must run when you want to add contacts to Mautic through monitoring Twitter for mentions and hashtags.'
+            ],
+            'mautic:webhooks:process' => [
+                'title'         => 'Webhooks',
+                'description'   => 'If Mautic is configured to send webhooks in batches, use this task to send the payloads.'
+            ],
+            'mautic:broadcasts:send' => [
+                'title'         => 'Send Scheduled Broadcasts',
+                'description'   => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.'
             ]
         ];
     }
