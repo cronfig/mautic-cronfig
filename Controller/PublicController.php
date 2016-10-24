@@ -32,7 +32,7 @@ class PublicController extends CommonController
         $config    = $this->factory->getParameter('cronfig');
         $logger    = $this->get('monolog.logger.mautic');
 
-        if (!isset($config['secret_key'])) {
+        if (empty($config['secret_key'])) {
             $response->setStatusCode(Codes::HTTP_FORBIDDEN);
             $output = 'error: secret key is missing in the configuration';
             $logger->log('error', 'Cronfig: secret key is missing in the configuration');
