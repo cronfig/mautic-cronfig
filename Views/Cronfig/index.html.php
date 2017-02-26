@@ -36,7 +36,9 @@ echo $view['assets']->includeStylesheet('plugins/CronfigBundle/Assets/css/cronfi
             Mautic.ajaxActionRequest('plugin:cronfig:saveApiKey', 'apiKey=' + apiKey, function(response) {
                 if (typeof response.secret_key !== 'undefined') {
                     for (var i = 0; i < document.cronfigConfig.tasks.length; i++) {
-                        document.cronfigConfig.tasks[i].url += '?secret_key=' + response.secret_key;
+                        if (document.cronfigConfig.tasks[i].url.indexOf('?secret_key=') === -1) {
+                            document.cronfigConfig.tasks[i].url += '?secret_key=' + response.secret_key;
+                        }
                     }
                 }
             }, true);
