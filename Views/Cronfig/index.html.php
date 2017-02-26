@@ -43,4 +43,4 @@ echo $view['assets']->includeStylesheet('plugins/CronfigBundle/Assets/css/cronfi
         }
     }
 </script>
-<script type="text/javascript" src="//cdn.cronfig.io/cronfig.js"></script>
+<script type="text/javascript" src="https://cdn.cronfig.io/cronfig.js"></script>
