@@ -49,11 +49,9 @@ return [
             'mautic.cronfig.model.cronfig' => [
                 'class' => 'MauticPlugin\CronfigBundle\Model\CronfigModel',
                 'arguments' => [
-                    'mautic.lead.model.lead',
-                    'mautic.category.model.category',
-                    'request_stack',
-                    'mautic.helper.ip_lookup',
-                    'mautic.helper.core_parameters'
+                    'mautic.helper.core_parameters',
+                    'mautic.configurator',
+                    'mautic.helper.cache',
                 ]
             ]
         ]

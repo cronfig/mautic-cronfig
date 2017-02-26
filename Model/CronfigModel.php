@@ -10,15 +10,43 @@
 namespace MauticPlugin\CronfigBundle\Model;
 
 use Mautic\CoreBundle\Model\AbstractCommonModel;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use Mautic\CoreBundle\Configurator\Configurator;
+use Mautic\CoreBundle\Helper\CacheHelper;
+use Mautic\CoreBundle\Helper\EncryptionHelper;
 
 /**
  * Class CronfigModel
  */
 class CronfigModel extends AbstractCommonModel
 {
+    /**
+     * Cronfig config params from local.php
+     * 
+     * @var array
+     */
+    protected $config;
 
     /**
-     * Return the array of available commands
+     * @var Configurator
+     */
+    protected $configurator;
+
+    /**
+     * @var Constructor
+     */
+    public function __construct(
+        CoreParametersHelper $coreParametersHelper,
+        Configurator $configurator,
+        CacheHelper $cacheHelper)
+    {
+        $this->config = $coreParametersHelper->getParameter('cronfig');
+        $this->configurator = $configurator;
+        $this->cache = $cacheHelper;
+    }
+
+    /**
+     * Return the array of predefined commands
      *
      * @return array
      */
@@ -72,21 +100,67 @@ class CronfigModel extends AbstractCommonModel
     public function getCommandsUrls($commands, $baseUrl)
     {
         $commandsWithUrls = [];
-        $config = $this->factory->getParameter('cronfig');
         $secretKey = '';
 
-        if (isset($config['secret_key'])) {
-            $secretKey = '?secret_key=' . $config['secret_key'];
+        if (isset($this->config['secret_key'])) {
+            $secretKey = '?secret_key=' . $this->config['secret_key'];
         }
 
         foreach ($commands as $command => $desc) {
             $commandsWithUrls[] = [
-                'url' => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
-                'title' => $desc['title'],
-                'description' => $desc['description']
+                'url'         => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
+                'title'       => $desc['title'],
+                'description' => $desc['description'],
             ];    
         }
 
         return $commandsWithUrls;
+    }
+
+    /**
+     * Save API key to the local.php config file if it's new. Returns the secret key.
+     *
+     * @param  string $apiKey
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function saveApiKey($apiKey)
+    {
+        if (!$apiKey) {
+            throw new \Exception('cronfig.api.key.empty');
+        }
+
+        if (!$this->configurator->isFileWritable()) {
+            throw new \Exception('mautic.config.notwritable');
+        }
+
+        // Ensure the config has a secret key
+        if (empty($this->config['secret_key'])) {
+            $secretKey = EncryptionHelper::generateKey();
+        } else {
+            $secretKey = $this->config['secret_key'];
+        }
+
+        // Save the API key and secret key only if it doesn't exist or has changed
+        if (empty($this->config['api_key'])
+            || empty($this->config['secret_key'])
+            || $this->config['api_key'] !== $apiKey
+            || $this->config['secret_key'] !== $secretKey) {
+            $this->configurator->mergeParameters(
+                [
+                    'cronfig' => [
+                        'api_key' => $apiKey,
+                        'secret_key' => $secretKey,
+                    ]
+                ]
+            );
+            $this->configurator->write();
+
+            // We must clear the application cache for the updated values to take effect
+            $this->cache->clearContainerFile();
+        }
+
+        return $secretKey;
     }
 }
