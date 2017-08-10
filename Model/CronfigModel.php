@@ -22,7 +22,7 @@ class CronfigModel extends AbstractCommonModel
 {
     /**
      * Cronfig config params from local.php
-     * 
+     *
      * @var array
      */
     protected $config;
@@ -111,7 +111,7 @@ class CronfigModel extends AbstractCommonModel
                 'url'         => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
                 'title'       => $desc['title'],
                 'description' => $desc['description'],
-            ];    
+            ];
         }
 
         return $commandsWithUrls;
