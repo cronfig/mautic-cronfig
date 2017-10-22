@@ -1,0 +1,21 @@
+{
+    "name": "cronfig/mautic-cronfig",
+    "description": "Mautic plugin for Cronfig.io service",
+    "keywords": ["mautic", "plugin", "cron", "monitoring", "automation"],
+    "type": "library",
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "John Linhart",
+            "email": "john@linhart.email",
+            "homepage" : "https://johnlinhart.com",
+            "role" : "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cronfig/mautic-cronfig/issues"
+    },
+    "require": {
+        "cronfig/sysinfo": "^1.0"
+    }
+}

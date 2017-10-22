@@ -9,6 +9,9 @@
 
 namespace MauticPlugin\CronfigBundle;
 
+// Local plugin Coposer vendor autoload
+require __DIR__ . '/vendor/autoload.php';
+
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
 
 /**
@@ -18,5 +21,5 @@ use Mautic\PluginBundle\Bundle\PluginBundleBase;
  */
 class CronfigBundle extends PluginBundleBase
 {
-
+    const VERSION = '1.0.0';
 }

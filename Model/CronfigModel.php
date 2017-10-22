@@ -14,6 +14,9 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
+use Cronfig\Sysinfo\System;
+use Cronfig\Sysinfo\OsInterface;
+
 
 /**
  * Class CronfigModel
@@ -31,6 +34,13 @@ class CronfigModel extends AbstractCommonModel
      * @var Configurator
      */
     protected $configurator;
+
+    /**
+     * Object representing current OS
+     *
+     * @var OsInterface
+     */
+    protected $os;
 
     /**
      * @var Constructor
@@ -162,5 +172,14 @@ class CronfigModel extends AbstractCommonModel
         }
 
         return $secretKey;
+    }
+
+    public function getOs()
+    {
+        if (!$this->os) {
+            $this->os = (new System)->getOs();
+        }
+
+        return $this->os;
     }
 }
