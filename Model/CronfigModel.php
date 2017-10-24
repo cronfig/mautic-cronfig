@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -9,19 +9,19 @@
 
 namespace MauticPlugin\CronfigBundle\Model;
 
-use Mautic\CoreBundle\Model\AbstractCommonModel;
-use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CacheHelper;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
+use Mautic\CoreBundle\Model\AbstractCommonModel;
 
 /**
- * Class CronfigModel
+ * Class CronfigModel.
  */
 class CronfigModel extends AbstractCommonModel
 {
     /**
-     * Cronfig config params from local.php
+     * Cronfig config params from local.php.
      *
      * @var array
      */
@@ -40,75 +40,75 @@ class CronfigModel extends AbstractCommonModel
         Configurator $configurator,
         CacheHelper $cacheHelper)
     {
-        $this->config = $coreParametersHelper->getParameter('cronfig');
+        $this->config       = $coreParametersHelper->getParameter('cronfig');
         $this->configurator = $configurator;
-        $this->cache = $cacheHelper;
+        $this->cache        = $cacheHelper;
     }
 
     /**
-     * Return the array of predefined commands
+     * Return the array of predefined commands.
      *
      * @return array
      */
     public function getCommands()
     {
         return [
-            'mautic:segments:update'   => [
-                'title'         => 'Update segments',
-                'description'   => 'Updates the contacts in the segments. This command is required for basic Mautic functions.'
+            'mautic:segments:update' => [
+                'title'       => 'Update segments',
+                'description' => 'Updates the contacts in the segments. This command is required for basic Mautic functions.',
             ],
             'mautic:campaigns:rebuild' => [
-                'title'         => 'Update campaigns',
-                'description'   => 'Adds/removes contacts from campaigns. This command is required for basic Mautic functions.'
+                'title'       => 'Update campaigns',
+                'description' => 'Adds/removes contacts from campaigns. This command is required for basic Mautic functions.',
             ],
             'mautic:campaigns:trigger' => [
-                'title'         => 'Trigger campaigns',
-                'description'   => 'Triggers the campaign events. This command is required for basic Mautic functions.'
+                'title'       => 'Trigger campaigns',
+                'description' => 'Triggers the campaign events. This command is required for basic Mautic functions.',
             ],
-            'mautic:emails:send'       => [
-                'title'         => 'Process emails',
-                'description'   => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.'
+            'mautic:emails:send' => [
+                'title'       => 'Process emails',
+                'description' => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.',
             ],
-            'mautic:email:fetch'       => [
-                'title'         => 'Fetch emails',
-                'description'   => 'Reads emails from a inbox defined in the Monitored Inbox setting.'
+            'mautic:email:fetch' => [
+                'title'       => 'Fetch emails',
+                'description' => 'Reads emails from a inbox defined in the Monitored Inbox setting.',
             ],
             'mautic:iplookup:download' => [
-                'title'         => 'Update geoIP',
-                'description'   => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.'
+                'title'       => 'Update geoIP',
+                'description' => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.',
             ],
             'mautic:social:monitoring' => [
-                'title'         => 'Social Monitoring',
-                'description'   => 'This task must run when you want to add contacts to Mautic through monitoring Twitter for mentions and hashtags.'
+                'title'       => 'Social Monitoring',
+                'description' => 'This task must run when you want to add contacts to Mautic through monitoring Twitter for mentions and hashtags.',
             ],
             'mautic:webhooks:process' => [
-                'title'         => 'Webhooks',
-                'description'   => 'If Mautic is configured to send webhooks in batches, use this task to send the payloads.'
+                'title'       => 'Webhooks',
+                'description' => 'If Mautic is configured to send webhooks in batches, use this task to send the payloads.',
             ],
             'mautic:broadcasts:send' => [
-                'title'         => 'Send Scheduled Broadcasts',
-                'description'   => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.'
-            ]
+                'title'       => 'Send Scheduled Broadcasts',
+                'description' => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.',
+            ],
         ];
     }
 
     /**
-     * Return the array of available commands
+     * Return the array of available commands.
      *
      * @return array
      */
     public function getCommandsUrls($commands, $baseUrl)
     {
         $commandsWithUrls = [];
-        $secretKey = '';
+        $secretKey        = '';
 
         if (isset($this->config['secret_key'])) {
-            $secretKey = '?secret_key=' . $this->config['secret_key'];
+            $secretKey = '?secret_key='.$this->config['secret_key'];
         }
 
         foreach ($commands as $command => $desc) {
             $commandsWithUrls[] = [
-                'url'         => $baseUrl . 'cronfig/' . urlencode($command) . $secretKey,
+                'url'         => $baseUrl.'cronfig/'.urlencode($command).$secretKey,
                 'title'       => $desc['title'],
                 'description' => $desc['description'],
             ];
@@ -120,9 +120,10 @@ class CronfigModel extends AbstractCommonModel
     /**
      * Save API key to the local.php config file if it's new. Returns the secret key.
      *
-     * @param  string $apiKey
+     * @param string $apiKey
      *
      * @return string
+     *
      * @throws Exception
      */
     public function saveApiKey($apiKey)
@@ -150,9 +151,9 @@ class CronfigModel extends AbstractCommonModel
             $this->configurator->mergeParameters(
                 [
                     'cronfig' => [
-                        'api_key' => $apiKey,
+                        'api_key'    => $apiKey,
                         'secret_key' => $secretKey,
-                    ]
+                    ],
                 ]
             );
             $this->configurator->write();

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -9,17 +9,16 @@
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
+use FOS\RestBundle\Util\Codes;
 use Mautic\CoreBundle\Controller\CommonController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Response;
-use FOS\RestBundle\Util\Codes;
 
 /**
- * Class PublicController
+ * Class PublicController.
  */
-
 class PublicController extends CommonController
 {
     /*
@@ -41,9 +40,9 @@ class PublicController extends CommonController
             $output = 'error: secret key is missing in the request';
             $logger->log('error', 'Cronfig: secret key is missing in the request');
         } elseif ($config['secret_key'] === $secretKey) {
-            $command = explode(' ', urldecode($command));
+            $command    = explode(' ', urldecode($command));
             $errorCount = $this->request->get('error_count', 0);
-            $args = array_merge(['console'], $command);
+            $args       = array_merge(['console'], $command);
 
             if ($errorCount > 2) {
                 // Try to force the command if it failed 2 times before

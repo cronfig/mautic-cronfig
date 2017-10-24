@@ -8,17 +8,17 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-namespace MauticPlugin\CronfigBundle\Model;
+namespace MauticPlugin\CronfigBundle\Tests\Model;
 
-use MauticPlugin\CronfigBundle\Model\CronfigModel;
-use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CacheHelper;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
 class CronfigModelTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      */
     public function testSaveApiKeyEmpty()
     {
