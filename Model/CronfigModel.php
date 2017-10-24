@@ -97,24 +97,18 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array
      */
-    public function getCommandsUrls($commands, $baseUrl)
+    public function getCommandsWithUrls($baseUrl, $secretKey)
     {
-        $commandsWithUrls = [];
-        $secretKey        = '';
+        $secretKeyParam = '?secret_key='.$secretKey;
 
-        if (isset($this->config['secret_key'])) {
-            $secretKey = '?secret_key='.$this->config['secret_key'];
-        }
-
-        foreach ($commands as $command => $desc) {
-            $commandsWithUrls[] = [
-                'url'         => $baseUrl.'cronfig/'.urlencode($command).$secretKey,
-                'title'       => $desc['title'],
-                'description' => $desc['description'],
-            ];
-        }
-
-        return $commandsWithUrls;
+        return array_map(
+            function($command, $commandConfig) use ($baseUrl, $secretKeyParam) {
+                $commandConfig['url'] = $baseUrl.'cronfig/'.urlencode($command).$secretKeyParam;
+                return $commandConfig;
+            },
+            array_keys($this->getCommands()),
+            $this->getCommands()
+        );
     }
 
     /**

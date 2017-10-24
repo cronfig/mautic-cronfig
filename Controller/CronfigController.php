@@ -22,11 +22,10 @@ class CronfigController extends CommonController
     public function indexAction()
     {
         $model            = $this->getModel('cronfig');
-        $commands         = $model->getCommands();
         $baseUrl          = $this->generateUrl('mautic_base_index', [], true);
-        $commandsWithUrls = $model->getCommandsUrls($commands, $baseUrl);
-        $email            = $this->factory->getUser()->getEmail();
         $config           = $this->factory->getParameter('cronfig');
+        $commandsWithUrls = $model->getCommandsWithUrls($baseUrl, $config['secret_key']);
+        $email            = $this->factory->getUser()->getEmail();
         $apiKey           = '';
 
         if (isset($config['api_key'])) {
