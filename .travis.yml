@@ -6,11 +6,13 @@ php:
   - 7.1
 
 before_script:
-  - ls
+  - pwd
   - cd ..
   - git clone https://github.com/mautic/mautic.git mautic
   - cd mautic
+  - composer install
   - mv $TRAVIS_BUILD_DIR plugins
+  - mv mautic-cronfig CronfigBundle
   - ls plugins
 
 script:
