@@ -21,21 +21,18 @@ class CronfigController extends CommonController
      */
     public function indexAction()
     {
-        $model            = $this->getModel('cronfig');
-        $baseUrl          = $this->generateUrl('mautic_base_index', [], true);
-        $config           = $this->factory->getParameter('cronfig');
-        $commandsWithUrls = $model->getCommandsWithUrls($baseUrl, $config['secret_key']);
-        $email            = $this->factory->getUser()->getEmail();
-        $apiKey           = '';
-
-        if (isset($config['api_key'])) {
-            $apiKey = $config['api_key'];
-        }
+        $model     = $this->getModel('cronfig');
+        $baseUrl   = $this->generateUrl('mautic_base_index', [], true);
+        $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
+        $email     = $this->get('mautic.helper.user')->getUser()->getEmail();
+        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+        $apiKey    = empty($config['api_key']) ? '' : $config['api_key'];
+        $commands  = $model->getCommandsWithUrls($baseUrl, $secretKey);
 
         return $this->delegateView([
             'viewParameters' => [
                 'title'    => 'cronfig.title',
-                'commands' => $commandsWithUrls,
+                'commands' => $commands,
                 'email'    => $email,
                 'apiKey'   => $apiKey,
             ],
