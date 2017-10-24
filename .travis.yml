@@ -12,7 +12,7 @@ before_script:
   - cd mautic
   - composer install
   - mv $TRAVIS_BUILD_DIR plugins
-  - mv mautic-cronfig CronfigBundle
+  - mv plugins/mautic-cronfig plugins/CronfigBundle
   - ls plugins
 
 script:
