@@ -29,4 +29,4 @@ script:
   - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff  --level=symfony --fixers=align_double_arrow,align_equals,ordered_use,short_array_syntax
 
   # Run PHPSTAN analysis for PHP 7+
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ]]; then ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
+  - if [[ ${TRAVIS_PHP_VERSION:0:3} != "5.6" ]]; then ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle; fi
