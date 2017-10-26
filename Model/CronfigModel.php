@@ -33,6 +33,11 @@ class CronfigModel extends AbstractCommonModel
     protected $configurator;
 
     /**
+     * @var CacheHelper
+     */
+    protected $cache;
+
+    /**
      * @var Constructor
      */
     public function __construct(

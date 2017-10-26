@@ -47,7 +47,7 @@ return [
     'services' => [
         'models' => [
             'mautic.cronfig.model.cronfig' => [
-                'class'     => 'MauticPlugin\CronfigBundle\Model\CronfigModel',
+                'class'     => MauticPlugin\CronfigBundle\Model\CronfigModel::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'mautic.configurator',
