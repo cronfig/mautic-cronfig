@@ -28,7 +28,7 @@ class CronfigModelTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCommandsArrayFormat()
     {
-        $model = $this->initModel();
+        $model    = $this->initModel();
         $commands = $model->getCommands();
 
         foreach ($commands as $command => $config) {
@@ -39,7 +39,7 @@ class CronfigModelTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCommandsWithUrls()
     {
-        $model = $this->initModel();
+        $model    = $this->initModel();
         $commands = $model->getCommandsWithUrls('https://cronfig.io/', 'some-secret');
 
         foreach ($commands as $command => $config) {

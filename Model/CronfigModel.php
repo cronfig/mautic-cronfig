@@ -102,8 +102,9 @@ class CronfigModel extends AbstractCommonModel
         $secretKeyParam = '?secret_key='.$secretKey;
 
         return array_map(
-            function($command, $commandConfig) use ($baseUrl, $secretKeyParam) {
+            function ($command, $commandConfig) use ($baseUrl, $secretKeyParam) {
                 $commandConfig['url'] = $baseUrl.'cronfig/'.urlencode($command).$secretKeyParam;
+
                 return $commandConfig;
             },
             array_keys($this->getCommands()),
