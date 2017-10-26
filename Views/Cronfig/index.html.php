@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -20,10 +20,10 @@ echo $view['assets']->includeStylesheet('plugins/CronfigBundle/Assets/css/cronfi
     <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 <div id="cronfig-wrapper" class="col-md-12">
-    <img 
-        class="loading" 
-        src="<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.svg'); ?>" 
-        onerror="this.src='<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.gif'); ?>'; this.onerror=null;" 
+    <img
+        class="loading"
+        src="<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.svg'); ?>"
+        onerror="this.src='<?php echo $view['assets']->getUrl('plugins/CronfigBundle/Assets/img/ring.gif'); ?>'; this.onerror=null;"
         alt="loading..." />
 </div>
 <script type="text/javascript">

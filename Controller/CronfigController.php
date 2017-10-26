@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -12,9 +12,8 @@ namespace MauticPlugin\CronfigBundle\Controller;
 use Mautic\CoreBundle\Controller\CommonController;
 
 /**
- * Class CronfigController
+ * Class CronfigController.
  */
-
 class CronfigController extends CommonController
 {
     /*
@@ -22,31 +21,27 @@ class CronfigController extends CommonController
      */
     public function indexAction()
     {
-        $model              = $this->getModel('cronfig');
-        $commands           = $model->getCommands();
-        $baseUrl            = $this->generateUrl('mautic_base_index', [], true);
-        $commandsWithUrls   = $model->getCommandsUrls($commands, $baseUrl);
-        $email              = $this->factory->getUser()->getEmail();
-        $config             = $this->factory->getParameter('cronfig');
-        $apiKey             = '';
-
-        if (isset($config['api_key'])) {
-            $apiKey = $config['api_key'];
-        }
+        $model     = $this->getModel('cronfig');
+        $baseUrl   = $this->generateUrl('mautic_base_index', [], true);
+        $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
+        $email     = $this->get('mautic.helper.user')->getUser()->getEmail();
+        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+        $apiKey    = empty($config['api_key']) ? '' : $config['api_key'];
+        $commands  = $model->getCommandsWithUrls($baseUrl, $secretKey);
 
         return $this->delegateView([
-            'viewParameters'    => [
-                'title'         => 'cronfig.title',
-                'commands'      => $commandsWithUrls,
-                'email'         => $email,
-                'apiKey'        => $apiKey,
+            'viewParameters' => [
+                'title'    => 'cronfig.title',
+                'commands' => $commands,
+                'email'    => $email,
+                'apiKey'   => $apiKey,
             ],
             'contentTemplate' => 'CronfigBundle:Cronfig:index.html.php',
             'passthroughVars' => [
                 'activeLink'    => '#cronfig',
                 'mauticContent' => 'cronfig',
-                'route'         => $this->generateUrl('cronfig')
-            ]
+                'route'         => $this->generateUrl('cronfig'),
+            ],
         ]);
     }
 }

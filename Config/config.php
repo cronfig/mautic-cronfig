@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -13,47 +13,47 @@ return [
     'version'     => '1.0',
     'author'      => 'Cronfig.io',
 
-    'routes'      => [
+    'routes' => [
         'main' => [
-            'cronfig'         => [
+            'cronfig' => [
                 'path'       => '/cronfig',
-                'controller' => 'CronfigBundle:Cronfig:index'
-            ]
+                'controller' => 'CronfigBundle:Cronfig:index',
+            ],
         ],
         'public' => [
             'cronfig_public' => [
-                'path' => '/cronfig/{command}',
+                'path'       => '/cronfig/{command}',
                 'controller' => 'CronfigBundle:Public:trigger',
-                'defaults' => [
-                    'command' => ''
-                ]
-            ]
-        ]
+                'defaults'   => [
+                    'command' => '',
+                ],
+            ],
+        ],
     ],
 
-    'menu'     => [
+    'menu' => [
         'admin' => [
-            'items'    => [
+            'items' => [
                 'cronfig.title' => [
                     'id'        => 'cronfig',
                     'route'     => 'cronfig',
                     'iconClass' => 'fa-clock-o',
                     // 'access'    => 'plugin:cronfig:cronfig:view',
-                ]
-            ]
-        ]
+                ],
+            ],
+        ],
     ],
 
     'services' => [
-        'models' =>  [
+        'models' => [
             'mautic.cronfig.model.cronfig' => [
-                'class' => 'MauticPlugin\CronfigBundle\Model\CronfigModel',
+                'class'     => MauticPlugin\CronfigBundle\Model\CronfigModel::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'mautic.configurator',
                     'mautic.helper.cache',
-                ]
-            ]
-        ]
+                ],
+            ],
+        ],
     ],
 ];

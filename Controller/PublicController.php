@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -9,17 +9,17 @@
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
+use FOS\RestBundle\Util\Codes;
 use Mautic\CoreBundle\Controller\CommonController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use FOS\RestBundle\Util\Codes;
 use MauticPlugin\CronfigBundle\Model\Os\AbstractOs;
 use MauticPlugin\CronfigBundle\CronfigBundle;
 
 /**
- * Class PublicController
+ * Class PublicController.
  */
 class PublicController extends CommonController
 {
