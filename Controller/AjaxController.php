@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * @package     Cronfig Mautic Bundle
  * @copyright   2016 Cronfig.io. All rights reserved
  * @author      Jan Linhart
@@ -14,14 +14,13 @@ use Mautic\CoreBundle\Helper\InputHelper;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class AjaxController
- *
- * @package MauticPlugin\CronfigBundle\Controller
+ * Class AjaxController.
  */
 class AjaxController extends CommonAjaxController
 {
     /**
      * @param Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     protected function saveApiKeyAction(Request $request)
@@ -31,7 +30,7 @@ class AjaxController extends CommonAjaxController
         $model    = $this->getModel('cronfig');
 
         try {
-            $response['success'] = 1;
+            $response['success']    = 1;
             $response['secret_key'] = $model->saveApiKey($apiKey);
         } catch (\Exception $e) {
             $this->addFlash('cronfig.config.not.updated', ['%error%' => $e->getMessage()], 'error');

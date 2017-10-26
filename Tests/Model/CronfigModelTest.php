@@ -8,22 +8,47 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-namespace MauticPlugin\CronfigBundle\Model;
+namespace MauticPlugin\CronfigBundle\Tests\Model;
 
-use MauticPlugin\CronfigBundle\Model\CronfigModel;
-use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CacheHelper;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
 class CronfigModelTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException Exception
+     * @expectedException \Exception
      */
     public function testSaveApiKeyEmpty()
     {
         $model = $this->initModel();
         $model->saveApiKey(null);
+    }
+
+    public function testGetCommandsArrayFormat()
+    {
+        $model    = $this->initModel();
+        $commands = $model->getCommands();
+
+        foreach ($commands as $command => $config) {
+            $this->assertTrue(!empty($config['title']));
+            $this->assertTrue(!empty($config['description']));
+        }
+    }
+
+    public function testGetCommandsWithUrls()
+    {
+        $model    = $this->initModel();
+        $commands = $model->getCommandsWithUrls('https://cronfig.io/', 'some-secret');
+
+        foreach ($commands as $command => $config) {
+            $this->assertTrue(!empty($config['title']));
+            $this->assertTrue(!empty($config['description']));
+            $this->assertTrue(!empty($config['url']));
+            $this->assertContains('?secret_key=some-secret', $config['url']);
+            $this->assertContains('https://cronfig.io/cronfig/', $config['url']);
+        }
     }
 
     protected function initModel()
