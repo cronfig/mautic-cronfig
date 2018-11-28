@@ -16,7 +16,6 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use MauticPlugin\CronfigBundle\Model\Os\AbstractOs;
-use MauticPlugin\CronfigBundle\CronfigBundle;
 
 /**
  * Class PublicController.
@@ -32,6 +31,8 @@ class PublicController extends CommonController
         $secretKey = $this->request->query->get('secret_key');
         $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
         $logger    = $this->get('monolog.logger.mautic');
+        $kernel    = $this->get('kernel');
+        $startTime = microtime(true);
         $data      = [];
 
         $response->setEncodingOptions(JSON_PRETTY_PRINT);
@@ -56,7 +57,6 @@ class PublicController extends CommonController
             $os         = $model->getOs();
 
             if ($os) {
-                $startTime          = microtime(true);
                 $initialMemoryUsage = $os->getCurrentMemoryUsage();
             }
 
@@ -68,7 +68,7 @@ class PublicController extends CommonController
             try {
                 $input  = new ArgvInput($args);
                 $output = new BufferedOutput();
-                $app    = new Application($this->get('kernel'));
+                $app    = new Application($kernel);
                 $app->setAutoExit(false);
                 $result = $app->run($input, $output);
                 $output = $output->fetch();
@@ -98,7 +98,7 @@ class PublicController extends CommonController
                 $data['metadata']   = [
                     'platform' => [
                         'name'    => 'Mautic',
-                        'version' => $this->get('kernel')->getVersion(),
+                        'version' => $kernel->getVersion(),
                     ],
                     'integration' => [
                         'name'    => 'Mautic-Cronfig',
