@@ -94,6 +94,10 @@ class CronfigModel extends AbstractCommonModel
                 'title'       => 'Send Scheduled Broadcasts',
                 'description' => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.',
             ],
+            'mautic:reports:scheduler' => [
+                'title'       => 'send Scheduled Reports',
+                'description' => 'This task is needed for sending scheduled report emails.',
+            ],
         ];
     }
 
