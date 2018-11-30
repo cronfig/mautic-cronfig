@@ -95,8 +95,12 @@ class CronfigModel extends AbstractCommonModel
                 'description' => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.',
             ],
             'mautic:reports:scheduler' => [
-                'title'       => 'send Scheduled Reports',
+                'title'       => 'Send Scheduled Reports',
                 'description' => 'This task is needed for sending scheduled report emails.',
+            ],
+            'mautic:import' => [
+                'title'       => 'Process background imports',
+                'description' => 'This task is needed for running imports on background so you don\'t have to wait with open browser.',
             ],
         ];
     }
