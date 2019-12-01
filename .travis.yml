@@ -11,7 +11,7 @@ before_install:
   # install dependencies in parallel
   - travis_retry composer global require hirak/prestissimo
 
-  - composer global require phpstan/phpstan-shim
+  - composer require --dev phpstan/phpstan-shim
 
 before_script:
   - cd ..
@@ -25,6 +25,6 @@ before_script:
 script:
   - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
   - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
+  - vendor/bin/phpstan.phar analyse plugins/CronfigBundle
+  - vendor/bin/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
+  - vendor/bin/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
