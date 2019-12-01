@@ -15,9 +15,6 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
 
-/**
- * Class CronfigModel.
- */
 class CronfigModel extends AbstractCommonModel
 {
     /**
@@ -38,7 +35,9 @@ class CronfigModel extends AbstractCommonModel
     protected $cache;
 
     /**
-     * @var Constructor
+     * @param CoreParametersHelper $coreParametersHelper
+     * @param Configurator $configurator
+     * @param CacheHelper $cacheHelper
      */
     public function __construct(
         CoreParametersHelper $coreParametersHelper,

@@ -18,18 +18,55 @@ use MauticPlugin\CronfigBundle\Model\CronfigModel;
 class CronfigModelTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @expectedException \Exception
+     * @var CoreParametersHelper|\PHPUnit_Framework_MockObject_MockBuilder
      */
+    private $coreParametersHelper;
+
+    /**
+     * @var Configurator|\PHPUnit_Framework_MockObject_MockBuilder
+     */
+    private $configurator;
+
+    /**
+     * @var CacheHelper|\PHPUnit_Framework_MockObject_MockBuilder
+     */
+    private $cacheHelper;
+
+    /**
+     * @var CronfigModel
+     */
+    private $cronfigModel;
+
+    protected function setUp()
+    {
+        $this->coreParametersHelper = $this->getMockBuilder(CoreParametersHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configurator = $this->getMockBuilder(Configurator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->cacheHelper = $this->getMockBuilder(CacheHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->cronfigModel = new CronfigModel(
+            $this->coreParametersHelper,
+            $this->configurator,
+            $this->cacheHelper
+        );
+    }
+
     public function testSaveApiKeyEmpty()
     {
-        $model = $this->initModel();
-        $model->saveApiKey(null);
+        $this->expectException(\Exception::class);
+        $this->cronfigModel->saveApiKey(null);
     }
 
     public function testGetCommandsArrayFormat()
     {
-        $model    = $this->initModel();
-        $commands = $model->getCommands();
+        $commands = $this->cronfigModel->getCommands();
 
         foreach ($commands as $command => $config) {
             $this->assertTrue(!empty($config['title']));
@@ -39,8 +76,7 @@ class CronfigModelTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCommandsWithUrls()
     {
-        $model    = $this->initModel();
-        $commands = $model->getCommandsWithUrls('https://cronfig.io/', 'some-secret');
+        $commands = $this->cronfigModel->getCommandsWithUrls('https://cronfig.io/', 'some-secret');
 
         foreach ($commands as $command => $config) {
             $this->assertTrue(!empty($config['title']));
@@ -49,22 +85,5 @@ class CronfigModelTest extends \PHPUnit_Framework_TestCase
             $this->assertContains('?secret_key=some-secret', $config['url']);
             $this->assertContains('https://cronfig.io/cronfig/', $config['url']);
         }
-    }
-
-    protected function initModel()
-    {
-        $coreParametersHelper = $this->getMockBuilder(CoreParametersHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $configurator = $this->getMockBuilder(Configurator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $cacheHelper = $this->getMockBuilder(CacheHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return new CronfigModel($coreParametersHelper, $configurator, $cacheHelper);
     }
 }

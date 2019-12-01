@@ -11,10 +11,16 @@
 namespace MauticPlugin\CronfigBundle;
 
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use MauticPlugin\CronfigBundle\CompilerPass\TaskServicePass;
 
-/**
- * Class CronfigBundle.
- */
 class CronfigBundle extends PluginBundleBase
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function build(ContainerBuilder $container): void
+    {
+        $container->addCompilerPass(new TaskServicePass());
+    }
 }
