@@ -33,7 +33,7 @@ abstract class AbstractTaskService implements TaskServiceInterface
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
-        $this->tasks  = new TaskCollection([]);
+        $this->tasks = new TaskCollection([]);
     }
 
     public function getCommand(): string

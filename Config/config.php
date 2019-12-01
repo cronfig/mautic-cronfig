@@ -47,19 +47,19 @@ return [
     'services' => [
         'commands' => [
             'cronfig.command.tasks_status' => [
-                'class'     => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
-                'tag'       => 'console.command',
+                'class' => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
+                'tag' => 'console.command',
                 'arguments' => ['cronfig.task_service.manager'],
             ],
             'cronfig.command.tasks_manage' => [
-                'class'     => \MauticPlugin\CronfigBundle\Command\TasksManage::class,
-                'tag'       => 'console.command',
+                'class' => \MauticPlugin\CronfigBundle\Command\TasksManage::class,
+                'tag' => 'console.command',
                 'arguments' => ['cronfig.task_service.manager'],
             ],
         ],
         'models' => [
             'cronfig.model.cronfig' => [
-                'class'     => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
+                'class' => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'mautic.configurator',

@@ -17,7 +17,7 @@ class Task
     public const STATUS_ACTIVE = 'active';
     public const STATUS_STOPPED = 'stopped';
     public const STATUS_CANCELED = 'canceled';
-    
+
     /**
      * @var string|null
      */
