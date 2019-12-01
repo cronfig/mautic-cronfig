@@ -2,7 +2,7 @@ language: php
 
 php:
   - 7.2
-  - 7.3
+  # - 7.3 # Fails on PHP CS Fixer.
 
 before_install:
   # turn off XDebug
@@ -11,8 +11,7 @@ before_install:
   # install dependencies in parallel
   - travis_retry composer global require hirak/prestissimo
 
-  # PHPSTAN somehow stopped working... No time to deal with it now...
-  # - composer require --dev phpstan/phpstan-shim
+  - composer global require phpstan/phpstan-shim:0.8.5
 
 before_script:
   - cd ..
@@ -26,6 +25,6 @@ before_script:
 script:
   - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
   - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony
-  # - vendor/bin/phpstan.phar analyse plugins/CronfigBundle
-  # - vendor/bin/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
-  # - vendor/bin/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
+  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
+  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
+  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
