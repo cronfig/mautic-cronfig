@@ -1,8 +1,13 @@
+dist: trusty
 language: php
 
 php:
   - 7.2
   # - 7.3 # Fails on PHP CS Fixer.
+
+cache:
+  directories:
+    - $HOME/.composer/cache
 
 before_install:
   # turn off XDebug
@@ -20,11 +25,10 @@ before_script:
   - composer install
   - mv $TRAVIS_BUILD_DIR plugins
   - mv plugins/mautic-cronfig plugins/CronfigBundle
-  - ls plugins/CronfigBundle
 
 script:
   - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
   - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
-  - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
+  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
+  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
+  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
