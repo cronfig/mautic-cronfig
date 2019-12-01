@@ -37,7 +37,8 @@ abstract class AbstractTaskService implements TaskServiceInterface
     {
         $baseUrl = $this->router->generate('mautic_base_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $domain = trim(str_ireplace(['http://', 'https://'], '', $baseUrl), '/');
-        return $allTasks->filter(function(Task $task) use ($domain) {
+
+        return $allTasks->filter(function (Task $task) use ($domain) {
             return strpos($task->getUrl(), $domain.'/cronfig/'.urlencode($this->getCommand())) !== false;
         });
     }

@@ -16,7 +16,7 @@ class TaskServiceProvider
 {
     /**
      * @var TaskServiceCollection
-     */ 
+     */
     private $taskServiceCollection;
 
     public function __construct()

@@ -36,17 +36,17 @@ class CronfigModel extends AbstractCommonModel
 
     /**
      * @param CoreParametersHelper $coreParametersHelper
-     * @param Configurator $configurator
-     * @param CacheHelper $cacheHelper
+     * @param Configurator         $configurator
+     * @param CacheHelper          $cacheHelper
      */
     public function __construct(
         CoreParametersHelper $coreParametersHelper,
         Configurator $configurator,
         CacheHelper $cacheHelper)
     {
-        $this->config       = $coreParametersHelper->getParameter('cronfig');
+        $this->config = $coreParametersHelper->getParameter('cronfig');
         $this->configurator = $configurator;
-        $this->cache        = $cacheHelper;
+        $this->cache = $cacheHelper;
     }
 
     /**
@@ -58,47 +58,47 @@ class CronfigModel extends AbstractCommonModel
     {
         return [
             'mautic:segments:update' => [
-                'title'       => 'Update segments',
+                'title' => 'Update segments',
                 'description' => 'Updates the contacts in the segments. This command is required for basic Mautic functions.',
             ],
             'mautic:campaigns:rebuild' => [
-                'title'       => 'Update campaigns',
+                'title' => 'Update campaigns',
                 'description' => 'Adds/removes contacts from campaigns. This command is required for basic Mautic functions.',
             ],
             'mautic:campaigns:trigger' => [
-                'title'       => 'Trigger campaigns',
+                'title' => 'Trigger campaigns',
                 'description' => 'Triggers the campaign events. This command is required for basic Mautic functions.',
             ],
             'mautic:emails:send' => [
-                'title'       => 'Process emails',
+                'title' => 'Process emails',
                 'description' => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.',
             ],
             'mautic:email:fetch' => [
-                'title'       => 'Fetch emails',
+                'title' => 'Fetch emails',
                 'description' => 'Reads emails from a inbox defined in the Monitored Inbox setting.',
             ],
             'mautic:iplookup:download' => [
-                'title'       => 'Update geoIP',
+                'title' => 'Update geoIP',
                 'description' => 'Downloads/updates the MaxMind GeoIp2 City database. This command is needed only if you use the "MaxMind - GeoIp2 City Download" IP lookup service.',
             ],
             'mautic:social:monitoring' => [
-                'title'       => 'Social Monitoring',
+                'title' => 'Social Monitoring',
                 'description' => 'This task must run when you want to add contacts to Mautic through monitoring Twitter for mentions and hashtags.',
             ],
             'mautic:webhooks:process' => [
-                'title'       => 'Webhooks',
+                'title' => 'Webhooks',
                 'description' => 'If Mautic is configured to send webhooks in batches, use this task to send the payloads.',
             ],
             'mautic:broadcasts:send' => [
-                'title'       => 'Send Scheduled Broadcasts',
+                'title' => 'Send Scheduled Broadcasts',
                 'description' => 'Instead of requiring a manual send and wait with the browser window open while ajax batches over the send - this task can now be used.',
             ],
             'mautic:reports:scheduler' => [
-                'title'       => 'Send Scheduled Reports',
+                'title' => 'Send Scheduled Reports',
                 'description' => 'This task is needed for sending scheduled report emails.',
             ],
             'mautic:import' => [
-                'title'       => 'Process background imports',
+                'title' => 'Process background imports',
                 'description' => 'This task is needed for running imports on background so you don\'t have to wait with open browser.',
             ],
         ];
@@ -158,7 +158,7 @@ class CronfigModel extends AbstractCommonModel
             $this->configurator->mergeParameters(
                 [
                     'cronfig' => [
-                        'api_key'    => $apiKey,
+                        'api_key' => $apiKey,
                         'secret_key' => $secretKey,
                     ],
                 ]

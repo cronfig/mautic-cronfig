@@ -55,15 +55,15 @@ class TasksStatus extends ContainerAwareCommand
         $io = new SymfonyStyle($input, $output);
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
-        
-        $allTasks     = $this->repository->getTaskCollection();
+
+        $allTasks = $this->repository->getTaskCollection();
         $taskServices = $this->taskServiceProvider->getTaskServiceCollection();
-        $table        = new Table($output);
+        $table = new Table($output);
         $table->setHeaders(['Task', 'Needs worker', 'has worker']);
 
         foreach ($taskServices as $taskService) {
-            $needsWorker      = $taskService->needsBackgroundJob();
-            $activeTasks      = $taskService->findActiveTasks($allTasks);
+            $needsWorker = $taskService->needsBackgroundJob();
+            $activeTasks = $taskService->findActiveTasks($allTasks);
             $activeTasksCount = $activeTasks->count();
             $needsWorkerColor = $needsWorker ? 'green' : 'yellow';
             $activeTasksColor = $activeTasksCount ? 'green' : 'yellow';

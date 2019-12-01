@@ -21,7 +21,7 @@ interface TaskServiceInterface
      * Finds all active Cronfig tasks that are triggering this particular Mautic task.
      *
      * @param TaskCollection $allTasks
-     * 
+     *
      * @return TaskCollection
      */
     public function findActiveTasks(TaskCollection $allTasks): TaskCollection;

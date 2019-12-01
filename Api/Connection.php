@@ -14,9 +14,7 @@ use Http\Adapter\Guzzle6\Client;
 use Guzzle\Http\Message\RequestInterface;
 use MauticPlugin\CronfigBundle\Exception\ApiException;
 use MauticPlugin\CronfigBundle\Exception\GraphQlException;
-use MauticPlugin\CronfigBundle\Api\Config;
 use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
-use MauticPlugin\CronfigBundle\Api\QueryBuilder;
 
 class Connection
 {
@@ -37,27 +35,27 @@ class Connection
 
     public function __construct(Config $apiConfig, Client $httpClient, QueryBuilder $queryBuilder)
     {
-        $this->apiConfig    = $apiConfig;
-        $this->httpClient   = $httpClient;
+        $this->apiConfig = $apiConfig;
+        $this->httpClient = $httpClient;
         $this->queryBuilder = $queryBuilder;
     }
 
     /**
      * @param string $query
-     * @param array $variables
-     * 
+     * @param array  $variables
+     *
      * @return array
-     * 
+     *
      * @throws ApiException|GraphQlException
      */
     public function query(string $query, array $variables = []): array
     {
         $headers = [
-            'Content-Type'    => 'application/json',
-            'Accept'          => 'application/json',
+            'Content-Type' => 'application/json',
+            'Accept' => 'application/json',
             'Accept-Encoding' => 'gzip, deflate, br',
-            'Connection'      => 'keep-alive',
-            'User-Agent'      => 'Jan\'s minimal GraphQL client',
+            'Connection' => 'keep-alive',
+            'User-Agent' => 'Jan\'s minimal GraphQL client',
         ];
 
         // Get the JWT token for all queries except the signIn query.
@@ -65,10 +63,10 @@ class Connection
             $headers['x-token'] = $this->getJwtToken();
         }
 
-        $content  = json_encode(['query' => $query, 'variables' => $variables]);
-        $request  = new Request(RequestInterface::POST, $this->apiConfig->getEndpoint(), $headers, $content);
+        $content = json_encode(['query' => $query, 'variables' => $variables]);
+        $request = new Request(RequestInterface::POST, $this->apiConfig->getEndpoint(), $headers, $content);
         $response = $this->httpClient->sendRequest($request);
-        
+
         if ($response->getStatusCode() >= 300) {
             throw new ApiException((string) $response->getBody(), $response->getStatusCode());
         }
@@ -94,9 +92,9 @@ class Connection
             );
 
             $jwt = $response['data']['signIn']['token'];
-    
+
             $this->apiConfig->setJwt($jwt);
-    
+
             return $jwt;
         }
     }

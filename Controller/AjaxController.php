@@ -25,12 +25,12 @@ class AjaxController extends CommonAjaxController
      */
     protected function saveApiKeyAction(Request $request)
     {
-        $apiKey   = InputHelper::clean($request->request->get('apiKey'));
+        $apiKey = InputHelper::clean($request->request->get('apiKey'));
         $response = ['success' => 0];
-        $model    = $this->getModel('cronfig');
+        $model = $this->getModel('cronfig');
 
         try {
-            $response['success']    = 1;
+            $response['success'] = 1;
             $response['secret_key'] = $model->saveApiKey($apiKey);
         } catch (\Exception $e) {
             $this->addFlash('cronfig.config.not.updated', ['%error%' => $e->getMessage()], 'error');

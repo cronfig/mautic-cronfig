@@ -64,6 +64,7 @@ class TaskCollection implements Iterator, Countable
     {
         return $this->records[$this->position];
     }
+
     /**
      * {@inheritdoc}
      */
@@ -71,6 +72,7 @@ class TaskCollection implements Iterator, Countable
     {
         ++$this->position;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -78,6 +80,7 @@ class TaskCollection implements Iterator, Countable
     {
         return $this->position;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -85,6 +88,7 @@ class TaskCollection implements Iterator, Countable
     {
         return isset($this->records[$this->position]);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -92,6 +96,7 @@ class TaskCollection implements Iterator, Countable
     {
         $this->position = 0;
     }
+
     /**
      * {@inheritdoc}
      */

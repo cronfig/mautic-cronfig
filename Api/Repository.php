@@ -9,8 +9,6 @@
 
 namespace MauticPlugin\CronfigBundle\Api;
 
-use MauticPlugin\CronfigBundle\Api\QueryBuilder;
-use MauticPlugin\CronfigBundle\Api\Connection;
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 
 class Repository
@@ -27,7 +25,7 @@ class Repository
 
     public function __construct(Connection $connection, QueryBuilder $queryBuilder)
     {
-        $this->connection   = $connection;
+        $this->connection = $connection;
         $this->queryBuilder = $queryBuilder;
     }
 

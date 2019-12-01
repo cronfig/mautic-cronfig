@@ -76,10 +76,10 @@ class Task
 
     public function __construct(string $url, string $status, int $period, int $timeout, string $platform)
     {
-        $this->url      = $url;
-        $this->status   = $status;
-        $this->period   = $period;
-        $this->timeout  = $timeout;
+        $this->url = $url;
+        $this->status = $status;
+        $this->period = $period;
+        $this->timeout = $timeout;
         $this->platform = $platform;
     }
 
