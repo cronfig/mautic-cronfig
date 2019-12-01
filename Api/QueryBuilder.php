@@ -9,6 +9,8 @@
 
 namespace MauticPlugin\CronfigBundle\Api;
 
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
+
 class QueryBuilder
 {
     public function buildJwtTokenQuery(string $apiKey): string
@@ -46,6 +48,32 @@ GRAPHQL;
                 errorCount
             }
         }
+    }
+}
+GRAPHQL;
+    }
+
+    public function buildCreateTasksQuery(Task $task): string
+    {
+        return <<<GRAPHQL
+mutation {
+    createTask(
+        url: "{$task->getUrl()}"
+        title: "Test task"
+        platform: "{$task->getPlatform()}"
+    ) {
+        id
+        url
+        status
+        platform
+        period
+        timeout
+        createdAt
+        updatedAt
+        triggeredAt
+        totalJobCount
+        totalErrorCount
+        errorCount
     }
 }
 GRAPHQL;

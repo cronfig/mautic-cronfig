@@ -47,17 +47,19 @@ return [
     'services' => [
         'commands' => [
             'cronfig.command.tasks_status' => [
-                'class' => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
-                'tag' => 'console.command',
-                'arguments' => [
-                    'cronfig.provider.task_service',
-                    'cronfig.api.repository',
-                ],
+                'class'     => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
+                'tag'       => 'console.command',
+                'arguments' => ['cronfig.task_service.manager'],
+            ],
+            'cronfig.command.tasks_manage' => [
+                'class'     => \MauticPlugin\CronfigBundle\Command\TasksManage::class,
+                'tag'       => 'console.command',
+                'arguments' => ['cronfig.task_service.manager'],
             ],
         ],
         'models' => [
             'cronfig.model.cronfig' => [
-                'class' => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
+                'class'     => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'mautic.configurator',
@@ -116,6 +118,13 @@ return [
                     'cronfig.provider.task_status',
                 ],
             ],
+            'cronfig.task_service.manager' => [
+                'class' => \MauticPlugin\CronfigBundle\TaskService\TaskManager::class,
+                'arguments' => [
+                    'cronfig.provider.task_service',
+                    'cronfig.api.repository',
+                ],
+            ],
         ],
         'api' => [
             'cronfig.api.config' => [
@@ -130,6 +139,7 @@ return [
                     'cronfig.api.config',
                     'mautic.guzzle.client',
                     'cronfig.api.query_builder',
+                    'monolog.logger.mautic',
                 ],
             ],
             'cronfig.api.query_builder' => [

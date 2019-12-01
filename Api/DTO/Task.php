@@ -14,6 +14,10 @@ use DateTimeImmutable;
 
 class Task
 {
+    public const STATUS_ACTIVE = 'active';
+    public const STATUS_STOPPED = 'stopped';
+    public const STATUS_CANCELED = 'canceled';
+    
     /**
      * @var string|null
      */
@@ -74,7 +78,7 @@ class Task
      */
     private $errorCount;
 
-    public function __construct(string $url, string $status, int $period, int $timeout, string $platform)
+    public function __construct(string $url, string $status, string $platform, int $period = 0, int $timeout = 0)
     {
         $this->url = $url;
         $this->status = $status;
@@ -85,7 +89,7 @@ class Task
 
     public static function makeFromArray(array $taskArray): Task
     {
-        $task = new self($taskArray['url'], $taskArray['status'], $taskArray['period'], $taskArray['timeout'], $taskArray['platform']);
+        $task = new self($taskArray['url'], $taskArray['status'], $taskArray['platform'], $taskArray['period'], $taskArray['timeout']);
 
         $task->setId($taskArray['id']);
         $task->setCreatedAt(new DateTimeImmutable($taskArray['createdAt']));

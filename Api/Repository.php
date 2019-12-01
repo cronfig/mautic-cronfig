@@ -9,6 +9,7 @@
 
 namespace MauticPlugin\CronfigBundle\Api;
 
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 
 class Repository
@@ -36,5 +37,20 @@ class Repository
                 $this->queryBuilder->buildGetTasksQuery()
             )
         );
+    }
+
+    public function activateTask(Task $task): Task
+    {
+        $response = $this->connection->query(
+            $this->queryBuilder->buildCreateTasksQuery($task)
+        );
+
+        return Task::makeFromArray($response['data']['createTask']);
+    }
+
+    public function disableActiveTasks(TaskCollection $tasks): TaskCollection
+    {
+        // @todo
+        return $tasks;
     }
 }

@@ -15,6 +15,7 @@ use Guzzle\Http\Message\RequestInterface;
 use MauticPlugin\CronfigBundle\Exception\ApiException;
 use MauticPlugin\CronfigBundle\Exception\GraphQlException;
 use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
+use Psr\Log\LoggerInterface;
 
 class Connection
 {
@@ -33,11 +34,18 @@ class Connection
      */
     private $queryBuilder;
 
-    public function __construct(Config $apiConfig, Client $httpClient, QueryBuilder $queryBuilder)
-    {
+    private $logger;
+
+    public function __construct(
+        Config $apiConfig,
+        Client $httpClient,
+        QueryBuilder $queryBuilder,
+        LoggerInterface $logger
+    ) {
         $this->apiConfig = $apiConfig;
         $this->httpClient = $httpClient;
         $this->queryBuilder = $queryBuilder;
+        $this->logger = $logger;
     }
 
     /**
@@ -64,6 +72,9 @@ class Connection
         }
 
         $content = json_encode(['query' => $query, 'variables' => $variables]);
+
+        $this->logger->debug('About to query the Cronfig API', ['content' => $content]);
+
         $request = new Request(RequestInterface::POST, $this->apiConfig->getEndpoint(), $headers, $content);
         $response = $this->httpClient->sendRequest($request);
 
@@ -76,6 +87,8 @@ class Connection
         if (isset($payload['errors'])) {
             throw new GraphQlException((string) $response->getBody());
         }
+
+        $this->logger->debug('Successful Cronfig API response', ['payload' => $payload]);
 
         return $payload;
     }

@@ -10,6 +10,7 @@
 namespace MauticPlugin\CronfigBundle\TaskService;
 
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 interface TaskServiceInterface
 {
@@ -18,11 +19,17 @@ interface TaskServiceInterface
     public function needsBackgroundJob(): bool;
 
     /**
-     * Finds all active Cronfig tasks that are triggering this particular Mautic task.
+     * Finds all matching Cronfig tasks that are triggering this particular Mautic task.
      *
      * @param TaskCollection $allTasks
      *
      * @return TaskCollection
      */
-    public function findActiveTasks(TaskCollection $allTasks): TaskCollection;
+    public function findMatchingTasks(TaskCollection $allTasks): TaskCollection;
+
+    public function setTasks(TaskCollection $tasks): void;
+
+    public function getTasks(): TaskCollection;
+
+    public function buildNewTask(): Task;
 }

@@ -23,9 +23,17 @@ abstract class AbstractTaskService implements TaskServiceInterface
      */
     protected $router;
 
+    /**
+     * Tasks that exists in the Cronfig.io service.
+     *
+     * @var TaskCollection
+     */
+    protected $tasks;
+
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
+        $this->tasks  = new TaskCollection([]);
     }
 
     public function getCommand(): string
@@ -33,13 +41,35 @@ abstract class AbstractTaskService implements TaskServiceInterface
         return static::COMMAND;
     }
 
-    public function findActiveTasks(TaskCollection $allTasks): TaskCollection
+    public function findMatchingTasks(TaskCollection $allTasks): TaskCollection
     {
-        $baseUrl = $this->router->generate('mautic_base_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $domain = trim(str_ireplace(['http://', 'https://'], '', $baseUrl), '/');
+        $domain = str_ireplace(['http://', 'https://'], '', $this->getMauticUrl());
 
         return $allTasks->filter(function (Task $task) use ($domain) {
             return strpos($task->getUrl(), $domain.'/cronfig/'.urlencode($this->getCommand())) !== false;
         });
+    }
+
+    public function setTasks(TaskCollection $tasks): void
+    {
+        $this->tasks = $tasks;
+    }
+
+    public function getTasks(): TaskCollection
+    {
+        return $this->tasks;
+    }
+
+    public function buildNewTask(): Task
+    {
+        $commandEncoded = urlencode($this->getCommand());
+        $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
+
+        return new Task($taskUrl, Task::STATUS_ACTIVE, 'Mautic');
+    }
+
+    private function getMauticUrl(): string
+    {
+        return trim($this->router->generate('mautic_base_index', [], UrlGeneratorInterface::ABSOLUTE_URL), '/');
     }
 }

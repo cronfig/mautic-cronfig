@@ -57,6 +57,13 @@ class TaskCollection implements Iterator, Countable
         return new self(array_filter($this->records, $callback));
     }
 
+    public function filterByStatus(string $status): TaskCollection
+    {
+        return $this->filter(function (Task $task) use ($status) {
+            return $task->getStatus() === $status;
+        });
+    }
+
     /**
      * {@inheritdoc}
      */

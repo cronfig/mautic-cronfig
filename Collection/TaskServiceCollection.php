@@ -41,6 +41,13 @@ class TaskServiceCollection implements Iterator, Countable
         $this->records[] = $task;
     }
 
+    public function map(callable $callback): TaskServiceCollection
+    {
+        array_map($callback, $this->records);
+
+        return $this;
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -15,9 +15,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use MauticPlugin\CronfigBundle\TaskService\TaskManager;
-use Symfony\Component\Console\Helper\Table;
 
-class TasksStatus extends ContainerAwareCommand
+class TasksManage extends ContainerAwareCommand
 {
     /**
      * @var TaskManager
@@ -35,8 +34,8 @@ class TasksStatus extends ContainerAwareCommand
      */
     protected function configure(): void
     {
-        $this->setName('cronfig:tasks:status')
-            ->setDescription('Finds tasks that need an active cron task to work and checks current status');
+        $this->setName('cronfig:tasks:manage')
+            ->setDescription('Finds tasks that need an active cron task to work and creates missing tasks and/or disables tasks that are not necessary.');
         parent::configure();
     }
 
@@ -49,24 +48,7 @@ class TasksStatus extends ContainerAwareCommand
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
 
-        $table = new Table($output);
-        $table->setHeaders(['Task', 'Needs worker', 'has worker']);
-
-        $taskServices = $this->taskManager->setMatchingTasks();
-
-        foreach ($taskServices as $taskService) {
-            $needsWorker = $taskService->needsBackgroundJob();
-            $matchingTasksCount = $taskService->getTasks()->count();
-            $needsWorkerColor = $needsWorker ? 'green' : 'yellow';
-            $matchingTasksColor = $matchingTasksCount ? 'green' : 'yellow';
-            $table->addRow([
-                $taskService->getCommand(),
-                "<fg={$needsWorkerColor}>{$needsWorker}</>",
-                "<fg={$matchingTasksColor}>{$matchingTasksCount}</>",
-            ]);
-        }
-
-        $table->render();
+        $this->taskManager->manageTasks();
 
         $event = $stopwatch->stop('command');
 
