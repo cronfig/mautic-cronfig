@@ -17,9 +17,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use MauticPlugin\CronfigBundle\Provider\TaskServiceProvider;
 use MauticPlugin\CronfigBundle\Api\Repository;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 class TasksStatus extends ContainerAwareCommand
 {
@@ -33,17 +30,11 @@ class TasksStatus extends ContainerAwareCommand
      */
     private $repository;
 
-    /**
-     * @var RouterInterface
-     */
-    private $router;
-
-    public function __construct(TaskServiceProvider $taskServiceProvider, Repository $repository, RouterInterface $router)
+    public function __construct(TaskServiceProvider $taskServiceProvider, Repository $repository)
     {
         parent::__construct();
         $this->taskServiceProvider = $taskServiceProvider;
         $this->repository = $repository;
-        $this->router = $router;
     }
 
     /**
@@ -64,22 +55,17 @@ class TasksStatus extends ContainerAwareCommand
         $io = new SymfonyStyle($input, $output);
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
-
-        $baseUrl = $this->router->generate('mautic_base_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $domain = trim(str_ireplace(['http://', 'https://'], '', $baseUrl), '/');
-        $allTasks = $this->repository->getTaskCollection();
+        
+        $allTasks     = $this->repository->getTaskCollection();
         $taskServices = $this->taskServiceProvider->getTaskServiceCollection();
         $table        = new Table($output);
         $table->setHeaders(['Task', 'Needs worker', 'has worker']);
 
         foreach ($taskServices as $taskService) {
-            $needsWorker = $taskService->needsBackgroundJob();
-            $needsWorkerColor = $needsWorker ? 'green' : 'yellow';
-            $command = $taskService->getCommand();
-            $activeTasks = $allTasks->filter(function(Task $task) use ($domain, $command) {
-                return strpos($task->getUrl(), $domain.'/cronfig/'.urlencode($command)) !== false;
-            });
+            $needsWorker      = $taskService->needsBackgroundJob();
+            $activeTasks      = $taskService->findActiveTasks($allTasks);
             $activeTasksCount = $activeTasks->count();
+            $needsWorkerColor = $needsWorker ? 'green' : 'yellow';
             $activeTasksColor = $activeTasksCount ? 'green' : 'yellow';
             $table->addRow([
                 $taskService->getCommand(),
