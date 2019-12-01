@@ -24,7 +24,7 @@ before_script:
 
 script:
   - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
-  - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony --fixers=align_double_arrow,align_equals,ordered_use,short_array_syntax
+  - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony
   - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
   - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
   - ~/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
