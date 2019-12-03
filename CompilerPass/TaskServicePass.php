@@ -16,21 +16,42 @@ namespace MauticPlugin\CronfigBundle\CompilerPass;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 
 class TaskServicePass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container): void
+    public function process(ContainerBuilder $containerBuilder): void
     {
         /** @var Definition $taskServiceProvider */
-        $taskServiceProvider = $container->findDefinition('cronfig.provider.task_service');
-        $taskServiceDiKeys = array_keys($container->findTaggedServiceIds('cronfig.task.service'));
+        $taskServiceProvider = $containerBuilder->findDefinition('cronfig.provider.task_service');
 
-        foreach ($taskServiceDiKeys as $id) {
-            $taskService = $container->findDefinition($id);
+        array_map(function(string $taskServiceDiKey) use ($containerBuilder, $taskServiceProvider) {
+            $taskService = $containerBuilder->findDefinition($taskServiceDiKey);
             $taskServiceProvider->addMethodCall('addTaskService', [$taskService]);
+        }, $this->findAllKeysByType($containerBuilder, TaskServiceInterface::class));
+    }
+
+    private function findAllKeysByType(ContainerBuilder $containerBuilder, string $type): array
+    {
+        $definitions = [];
+
+        foreach ($containerBuilder->getDefinitions() as $name => $definition) {
+            $class = $definition->getClass() ?: $name;
+            // This class has a use statement to unexistent interface which causes
+            // an error in the `is_a()` method.
+            if (\FOS\RestBundle\Serializer\ExceptionWrapperNormalizer::class === $class) {
+                continue;
+            }
+
+            if (is_a($class, $type, true)) {
+                $definitions[] = $name;
+            }
         }
+
+        return $definitions;
     }
 }
+

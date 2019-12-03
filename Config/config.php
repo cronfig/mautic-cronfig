@@ -96,7 +96,6 @@ return [
         'taskServices' => [
             'cronfig.task_service.segments_update' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\SegmentsUpdateTaskService::class,
-                'tag' => 'cronfig.task.service',
                 'arguments' => [
                     'router',
                     'cronfig.provider.task_status',
@@ -104,7 +103,6 @@ return [
             ],
             'cronfig.task_service.campaigns_update' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsUpdateTaskService::class,
-                'tag' => 'cronfig.task.service',
                 'arguments' => [
                     'router',
                     'cronfig.provider.task_status',
@@ -112,7 +110,6 @@ return [
             ],
             'cronfig.task_service.campaigns_trigger' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsTriggerTaskService::class,
-                'tag' => 'cronfig.task.service',
                 'arguments' => [
                     'router',
                     'cronfig.provider.task_status',
