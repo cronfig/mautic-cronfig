@@ -15,7 +15,7 @@ use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
-class CronfigModelTest extends \PHPUnit_Framework_TestCase
+class CronfigModelTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var CoreParametersHelper|\PHPUnit_Framework_MockObject_MockBuilder
