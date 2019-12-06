@@ -9,6 +9,7 @@
 
 namespace MauticPlugin\CronfigBundle\Command;
 
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,19 +51,34 @@ class TasksStatus extends ContainerAwareCommand
         $stopwatch->start('command');
 
         $table = new Table($output);
-        $table->setHeaders(['Task', 'Needs worker', 'has worker']);
+        $table->setHeaders(['Command', 'Active', 'Active Tasks', 'Stopped Tasks', 'Canceled Tasks']);
 
         $taskServices = $this->taskManager->setMatchingTasks();
 
         foreach ($taskServices as $taskService) {
-            $needsWorker = $taskService->needsBackgroundJob();
-            $matchingTasksCount = $taskService->getTasks()->count();
-            $needsWorkerColor = $needsWorker ? 'green' : 'yellow';
-            $matchingTasksColor = $matchingTasksCount ? 'green' : 'yellow';
+            $needsWorker = (int) $taskService->needsBackgroundJob();
+            $tasks = $taskService->getTasks();
+            $activeTasksCount = $tasks->filterByStatus(Task::STATUS_ACTIVE)->count();
+            $stoppedTasksCount = $tasks->filterByStatus(Task::STATUS_STOPPED)->count();
+            $canceledTasksCount = $tasks->filterByStatus(Task::STATUS_CANCELED)->count();
+            $needsWorkerColor =  'white';
+            $activeTasksColor = 'white';
+            $stoppedTasksColor = 'white';
+            if ($needsWorker) {
+                $needsWorkerColor = 'green';
+                if ($activeTasksCount) {
+                    $activeTasksColor = 'green';
+                } else {
+                    $activeTasksColor = 'red';
+                }
+            }
+            $canceledTasksColor = $canceledTasksCount ? 'red' : 'white';
             $table->addRow([
                 $taskService->getCommand(),
                 "<fg={$needsWorkerColor}>{$needsWorker}</>",
-                "<fg={$matchingTasksColor}>{$matchingTasksCount}</>",
+                "<fg={$activeTasksColor}>{$activeTasksCount}</>",
+                "<fg={$stoppedTasksColor}>{$stoppedTasksCount}</>",
+                "<fg={$canceledTasksColor}>{$canceledTasksCount}</>",
             ]);
         }
 
