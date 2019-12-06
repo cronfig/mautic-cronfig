@@ -40,9 +40,9 @@ class TaskServicePass implements CompilerPassInterface
 
         foreach ($containerBuilder->getDefinitions() as $name => $definition) {
             $class = $definition->getClass() ?: $name;
-            // This class has a use statement to unexistent interface which causes
-            // an error in the `is_a()` method.
-            if (\FOS\RestBundle\Serializer\ExceptionWrapperNormalizer::class === $class) {
+
+            // This class has a use statement to unexistent interface which causes an error in the `is_a()` method.
+            if (\FOS\RestBundle\Serializer\Normalizer\FormErrorNormalizer::class === $class) {
                 continue;
             }
 
