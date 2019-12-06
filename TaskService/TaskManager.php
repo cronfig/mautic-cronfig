@@ -12,7 +12,6 @@ namespace MauticPlugin\CronfigBundle\TaskService;
 use MauticPlugin\CronfigBundle\Collection\TaskServiceCollection;
 use MauticPlugin\CronfigBundle\Provider\TaskServiceProvider;
 use MauticPlugin\CronfigBundle\Api\Repository;
-use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 class TaskManager
 {
@@ -58,17 +57,8 @@ class TaskManager
         $taskServices = $this->setMatchingTasks();
 
         return $taskServices->map(function (TaskServiceInterface $taskService) {
-            $activeTasks = $taskService->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
-
-            if ($taskService->needsBackgroundJob() && $activeTasks->count() === 0) {
-                $taskService->getTasks()->add(
-                    $this->repository->activateTask($taskService->buildNewTask())
-                );
-            }
-
-            if (!$taskService->needsBackgroundJob() && $activeTasks->count() > 0) {
-                $this->repository->disableActiveTasks($activeTasks);
-            }
+            $this->repository->createTasks($taskService->getTasksToCreate());
+            $this->repository->updateTasks($taskService->getTasksToUpdate());
         });
     }
 }

@@ -31,7 +31,7 @@ class TaskCollection implements Iterator, Countable
     /**
      * @param Task[] $recors
      */
-    public function __construct(array $records)
+    public function __construct(array $records = [])
     {
         $this->records = $records;
     }
@@ -45,6 +45,13 @@ class TaskCollection implements Iterator, Countable
         }
 
         return $taskCollection;
+    }
+
+    public function map(callable $callback): TaskCollection
+    {
+        array_map($callback, $this->records);
+
+        return $this;
     }
 
     public function add(Task $task): void

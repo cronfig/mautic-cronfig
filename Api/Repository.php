@@ -11,6 +11,7 @@ namespace MauticPlugin\CronfigBundle\Api;
 
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
+use MauticPlugin\CronfigBundle\Exception\ApiException;
 
 class Repository
 {
@@ -39,18 +40,41 @@ class Repository
         );
     }
 
-    public function activateTask(Task $task): Task
+    public function createTasks(TaskCollection $tasksToCreate): TaskCollection
     {
-        $response = $this->connection->query(
-            $this->queryBuilder->buildCreateTasksQuery($task)
-        );
+        $createdTasks = new TaskCollection();
+        $tasksToCreate->map(function (Task $taskToCreate) use ($createdTasks) {
+            try {
+                $response = $this->connection->query(
+                    $this->queryBuilder->buildCreateTasksQuery($taskToCreate)
+                );
+        
+                $createdTasks->add(Task::makeFromArray($response['data']['createTask']));
+            } catch (ApiException $e) {
+                // @todo implement some logging. Throw it for now.
+                throw $e;
+            }
+        });
 
-        return Task::makeFromArray($response['data']['createTask']);
+        return $createdTasks;
     }
 
-    public function disableActiveTasks(TaskCollection $tasks): TaskCollection
+    public function updateTasks(TaskCollection $tasksToUpdate): TaskCollection
     {
-        // @todo
-        return $tasks;
+        $updatedTasks = new TaskCollection();
+        $tasksToUpdate->map(function (Task $taskToUpdate) use ($updatedTasks) {
+            try {
+                $response = $this->connection->query(
+                    $this->queryBuilder->buildUpdateTasksQuery($taskToUpdate)
+                );
+        
+                $updatedTasks->add(Task::makeFromArray($response['data']['updateTask']));
+            } catch (ApiException $e) {
+                // @todo implement some logging. Throw it for now.
+                throw $e;
+            }
+        });
+
+        return $updatedTasks;
     }
 }

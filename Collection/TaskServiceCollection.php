@@ -31,7 +31,7 @@ class TaskServiceCollection implements Iterator, Countable
     /**
      * @param TaskServiceInterface[] $recors
      */
-    public function __construct(array $records)
+    public function __construct(array $records = [])
     {
         $this->records = $records;
     }

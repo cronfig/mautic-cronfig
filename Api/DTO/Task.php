@@ -125,6 +125,11 @@ class Task
         return $this->status;
     }
 
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
+    }
+
     public function getPeriod(): int
     {
         return $this->period;

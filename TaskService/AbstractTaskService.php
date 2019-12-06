@@ -33,7 +33,7 @@ abstract class AbstractTaskService implements TaskServiceInterface
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
-        $this->tasks = new TaskCollection([]);
+        $this->tasks = new TaskCollection();
     }
 
     public function getCommand(): string
@@ -60,12 +60,32 @@ abstract class AbstractTaskService implements TaskServiceInterface
         return $this->tasks;
     }
 
-    public function buildNewTask(): Task
+    public function getTasksToCreate(): TaskCollection
     {
-        $commandEncoded = urlencode($this->getCommand());
-        $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
+        $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
+        $tasksToCreate = new TaskCollection();
 
-        return new Task($taskUrl, Task::STATUS_ACTIVE, 'Mautic');
+        if ($this->needsBackgroundJob() && $activeTasks->count() === 0) {
+            $commandEncoded = urlencode($this->getCommand());
+            $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
+    
+            $tasksToCreate->add(new Task($taskUrl, Task::STATUS_ACTIVE, 'Mautic'));
+        }
+
+        return $tasksToCreate;
+    }
+
+    public function getTasksToUpdate(): TaskCollection
+    {
+        $tasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
+
+        if (!$this->needsBackgroundJob()) {
+            return $tasks->map(function (Task $task) {
+                $task->setStatus(Task::STATUS_STOPPED);
+            });
+        }
+
+        return new TaskCollection();
     }
 
     private function getMauticUrl(): string

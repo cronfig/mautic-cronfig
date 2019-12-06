@@ -21,7 +21,7 @@ class TaskServiceProvider
 
     public function __construct()
     {
-        $this->taskServiceCollection = new TaskServiceCollection([]);
+        $this->taskServiceCollection = new TaskServiceCollection();
     }
 
     public function addTaskService(TaskServiceInterface $taskService): void

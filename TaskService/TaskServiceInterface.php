@@ -10,7 +10,6 @@
 namespace MauticPlugin\CronfigBundle\TaskService;
 
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
-use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 interface TaskServiceInterface
 {
@@ -31,5 +30,7 @@ interface TaskServiceInterface
 
     public function getTasks(): TaskCollection;
 
-    public function buildNewTask(): Task;
+    public function getTasksToCreate(): TaskCollection;
+
+    public function getTasksToUpdate(): TaskCollection;
 }
