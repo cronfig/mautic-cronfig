@@ -9,7 +9,6 @@
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
-use FOS\RestBundle\Util\Codes;
 use Mautic\CoreBundle\Controller\CommonController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -32,11 +31,11 @@ class PublicController extends CommonController
         $logger = $this->get('monolog.logger.mautic');
 
         if (empty($config['secret_key'])) {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key is missing in the configuration';
             $logger->log('error', 'Cronfig: secret key is missing in the configuration');
         } elseif (!$secretKey) {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key is missing in the request';
             $logger->log('error', 'Cronfig: secret key is missing in the request');
         } elseif ($config['secret_key'] === $secretKey) {
