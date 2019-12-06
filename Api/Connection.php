@@ -77,16 +77,13 @@ class Connection
 
         $request = new Request(RequestInterface::POST, $this->apiConfig->getEndpoint(), $headers, $content);
         $response = $this->httpClient->sendRequest($request);
+        $body = (string) $response->getBody();
 
         if ($response->getStatusCode() >= 300) {
-            throw new ApiException((string) $response->getBody(), $response->getStatusCode());
+            throw new ApiException($body, $response->getStatusCode());
         }
 
-        $payload = json_decode((string) $response->getBody(), true);
-
-        if (isset($payload['errors'])) {
-            throw new GraphQlException((string) $response->getBody());
-        }
+        $payload = json_decode($body, true);
 
         $this->logger->debug('Successful Cronfig API response', ['payload' => $payload]);
 
