@@ -78,4 +78,32 @@ mutation {
 }
 GRAPHQL;
     }
+
+    public function buildUpdateTasksQuery(Task $task): string
+    {
+        return <<<GRAPHQL
+mutation {
+    updateTask(
+        id: "{$task->getId()}"
+        url: "{$task->getUrl()}"
+        platform: "{$task->getPlatform()}"
+        status: "{$task->getStatus()}"
+        period: {$task->getPeriod()}
+    ) {
+        id
+        url
+        status
+        platform
+        period
+        timeout
+        createdAt
+        updatedAt
+        triggeredAt
+        totalJobCount
+        totalErrorCount
+        errorCount
+    }
+}
+GRAPHQL;
+    }
 }
