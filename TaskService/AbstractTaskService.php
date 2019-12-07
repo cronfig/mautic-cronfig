@@ -62,10 +62,26 @@ abstract class AbstractTaskService implements TaskServiceInterface
 
     public function getTasksToCreate(): TaskCollection
     {
-        $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
         $tasksToCreate = new TaskCollection();
 
-        if ($this->needsBackgroundJob() && 0 === $activeTasks->count()) {
+        if (!$this->needsBackgroundJob()) {
+            // This Mautic task does not need a Cronfig task to be created.
+            return $tasksToCreate;
+        }
+
+        if ($this->getTasks()->filterByStatus(Task::STATUS_CANCELED)->count() > 0) {
+            // If a task was canceled by the Cronfig service, only a human should
+            // rewiew it and enable it again.
+            return $tasksToCreate;
+        }
+
+        if ($this->getTasks()->filterByStatus(Task::STATUS_STOPPED)->count() > 0) {
+            // There are some tasks that were previously stopped. Let the getTasksToUpdate()
+            // method activate them rather than creating a new one.
+            return $tasksToCreate;
+        }
+
+        if (0 === $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE)->count()) {
             $commandEncoded = urlencode($this->getCommand());
             $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
 
@@ -77,10 +93,20 @@ abstract class AbstractTaskService implements TaskServiceInterface
 
     public function getTasksToUpdate(): TaskCollection
     {
-        $tasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
+        $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
+        $canceledTasks = $this->getTasks()->filterByStatus(Task::STATUS_CANCELED);
+        $needsTask = $this->needsBackgroundJob();
 
-        if (!$this->needsBackgroundJob()) {
-            return $tasks->map(function (Task $task) {
+        if ($needsTask && 0 === $activeTasks->count() && $canceledTasks->count() > 0) {
+            foreach ($canceledTasks as $canceledTask) {
+                $canceledTask->setStatus(Task::STATUS_ACTIVE);
+
+                return new TaskCollection([$canceledTask]);
+            }
+        }
+
+        if (!$needsTask && $activeTasks->count() > 0) {
+            return $activeTasks->map(function (Task $task) {
                 $task->setStatus(Task::STATUS_STOPPED);
             });
         }
