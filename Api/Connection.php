@@ -13,7 +13,6 @@ use GuzzleHttp\Psr7\Request;
 use Http\Adapter\Guzzle6\Client;
 use Guzzle\Http\Message\RequestInterface;
 use MauticPlugin\CronfigBundle\Exception\ApiException;
-use MauticPlugin\CronfigBundle\Exception\GraphQlException;
 use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
 use Psr\Log\LoggerInterface;
 
@@ -54,7 +53,7 @@ class Connection
      *
      * @return array
      *
-     * @throws ApiException|GraphQlException
+     * @throws ApiException
      */
     public function query(string $query, array $variables = []): array
     {
@@ -67,7 +66,7 @@ class Connection
         ];
 
         // Get the JWT token for all queries except the signIn query.
-        if (strpos($query, 'signIn') === false) {
+        if (false === strpos($query, 'signIn')) {
             $headers['x-token'] = $this->getJwtToken();
         }
 

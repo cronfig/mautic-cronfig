@@ -46,7 +46,7 @@ abstract class AbstractTaskService implements TaskServiceInterface
         $domain = str_ireplace(['http://', 'https://'], '', $this->getMauticUrl());
 
         return $allTasks->filter(function (Task $task) use ($domain) {
-            return strpos($task->getUrl(), $domain.'/cronfig/'.urlencode($this->getCommand())) !== false;
+            return false !== strpos($task->getUrl(), $domain.'/cronfig/'.urlencode($this->getCommand()));
         });
     }
 
@@ -65,10 +65,10 @@ abstract class AbstractTaskService implements TaskServiceInterface
         $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
         $tasksToCreate = new TaskCollection();
 
-        if ($this->needsBackgroundJob() && $activeTasks->count() === 0) {
+        if ($this->needsBackgroundJob() && 0 === $activeTasks->count()) {
             $commandEncoded = urlencode($this->getCommand());
             $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
-    
+
             $tasksToCreate->add(new Task($taskUrl, Task::STATUS_ACTIVE, 'Mautic'));
         }
 

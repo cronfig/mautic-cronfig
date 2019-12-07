@@ -28,7 +28,7 @@ class TaskServicePass implements CompilerPassInterface
         /** @var Definition $taskServiceProvider */
         $taskServiceProvider = $containerBuilder->findDefinition('cronfig.provider.task_service');
 
-        array_map(function(string $taskServiceDiKey) use ($containerBuilder, $taskServiceProvider) {
+        array_map(function (string $taskServiceDiKey) use ($containerBuilder, $taskServiceProvider) {
             $taskService = $containerBuilder->findDefinition($taskServiceDiKey);
             $taskServiceProvider->addMethodCall('addTaskService', [$taskService]);
         }, $this->findAllKeysByType($containerBuilder, TaskServiceInterface::class));
@@ -54,4 +54,3 @@ class TaskServicePass implements CompilerPassInterface
         return $definitions;
     }
 }
-

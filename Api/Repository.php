@@ -48,7 +48,7 @@ class Repository
                 $response = $this->connection->query(
                     $this->queryBuilder->buildCreateTasksQuery($taskToCreate)
                 );
-        
+
                 $createdTasks->add(Task::makeFromArray($response['data']['createTask']));
             } catch (ApiException $e) {
                 // @todo implement some logging. Throw it for now.
@@ -67,7 +67,7 @@ class Repository
                 $response = $this->connection->query(
                     $this->queryBuilder->buildUpdateTasksQuery($taskToUpdate)
                 );
-        
+
                 $updatedTasks->add(Task::makeFromArray($response['data']['updateTask']));
             } catch (ApiException $e) {
                 // @todo implement some logging. Throw it for now.

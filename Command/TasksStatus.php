@@ -61,7 +61,7 @@ class TasksStatus extends ContainerAwareCommand
             $activeTasksCount = $tasks->filterByStatus(Task::STATUS_ACTIVE)->count();
             $stoppedTasksCount = $tasks->filterByStatus(Task::STATUS_STOPPED)->count();
             $canceledTasksCount = $tasks->filterByStatus(Task::STATUS_CANCELED)->count();
-            $needsWorkerColor =  'white';
+            $needsWorkerColor = 'white';
             $activeTasksColor = 'white';
             $stoppedTasksColor = 'white';
             if ($needsWorker) {

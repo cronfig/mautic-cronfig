@@ -65,7 +65,7 @@ class PublicController extends CommonController
             $errorWords = ['--force', 'exception'];
 
             foreach ($errorWords as $errorWord) {
-                if (strpos($output, $errorWord) !== false) {
+                if (false !== strpos($output, $errorWord)) {
                     $response->setStatusCode(500);
                 }
             }
