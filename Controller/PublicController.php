@@ -70,7 +70,7 @@ class PublicController extends CommonController
                 }
             }
         } else {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key mismatch';
             $logger->log('error', 'Cronfig: secret key mismatch: '.$config['secret_key'].' != '.$secretKey);
         }

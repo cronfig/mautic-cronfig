@@ -42,7 +42,7 @@ class TaskServicePass implements CompilerPassInterface
             $class = $definition->getClass() ?: $name;
 
             // This class has a use statement to unexistent interface which causes an error in the `is_a()` method.
-            if (\FOS\RestBundle\Serializer\Normalizer\FormErrorNormalizer::class === $class) {
+            if ('FOS\\RestBundle\\Serializer\\Normalizer\\FormErrorNormalizer' === $class) {
                 continue;
             }
 
