@@ -17,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use MauticPlugin\CronfigBundle\TaskService\TaskManager;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Input\InputOption;
 
 class TasksStatus extends ContainerAwareCommand
 {
@@ -36,8 +37,14 @@ class TasksStatus extends ContainerAwareCommand
      */
     protected function configure(): void
     {
-        $this->setName('cronfig:tasks:status')
-            ->setDescription('Finds tasks that need an active cron task to work and checks current status');
+        $this->setName('cronfig:tasks:status');
+        $this->setDescription('Finds tasks that need an active cron task to work and checks current status');
+        $this->addOption(
+            '--command',
+            '-c',
+            InputOption::VALUE_OPTIONAL,
+            'Provides more details about a single command. Example: cronfig:tasks:status -c mautic:segments:update'
+        );
         parent::configure();
     }
 
@@ -50,6 +57,9 @@ class TasksStatus extends ContainerAwareCommand
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
 
+        $command = $input->getOption('command');
+        $commandToDetail = null;
+
         $table = new Table($output);
         $table->setHeaders(['Command', 'Active', 'Active Tasks', 'Stopped Tasks', 'Canceled Tasks']);
 
@@ -61,6 +71,7 @@ class TasksStatus extends ContainerAwareCommand
             $activeTasksCount = $tasks->filterByStatus(Task::STATUS_ACTIVE)->count();
             $stoppedTasksCount = $tasks->filterByStatus(Task::STATUS_STOPPED)->count();
             $canceledTasksCount = $tasks->filterByStatus(Task::STATUS_CANCELED)->count();
+            $commandColor = 'white';
             $needsWorkerColor = 'white';
             $activeTasksColor = 'white';
             $stoppedTasksColor = 'white';
@@ -72,9 +83,13 @@ class TasksStatus extends ContainerAwareCommand
                     $activeTasksColor = 'red';
                 }
             }
+            if ($taskService->getCommand() === $command) {
+                $commandColor = 'green';
+                $commandToDetail = $taskService;
+            }
             $canceledTasksColor = $canceledTasksCount ? 'red' : 'white';
             $table->addRow([
-                $taskService->getCommand(),
+                "<fg={$commandColor}>{$taskService->getCommand()}</>",
                 "<fg={$needsWorkerColor}>{$needsWorker}</>",
                 "<fg={$activeTasksColor}>{$activeTasksCount}</>",
                 "<fg={$stoppedTasksColor}>{$stoppedTasksCount}</>",
@@ -83,6 +98,15 @@ class TasksStatus extends ContainerAwareCommand
         }
 
         $table->render();
+
+        if ($command) {
+            if ($commandToDetail) {
+                $io->section("Cronfig tasks for command $command");
+                $io->write(json_encode($commandToDetail->getTasks()->toArray(), JSON_PRETTY_PRINT));
+            } else {
+                $io->warning("Command '{$command}' not found. Pick a command from the table above.");
+            }
+        }
 
         $event = $stopwatch->stop('command');
 

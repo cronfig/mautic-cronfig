@@ -71,6 +71,13 @@ class TaskCollection implements Iterator, Countable
         });
     }
 
+    public function toArray(): array
+    {
+        return array_map(function (Task $task) {
+            return $task->toArray();
+        }, $this->records);
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -105,6 +105,24 @@ class Task
         return $task;
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'status' => $this->getStatus(),
+            'url' => $this->getUrl(),
+            'period' => $this->getPeriod(),
+            'createdAt' => $this->getCreatedAt() ? $this->getCreatedAt()->format(DateTimeInterface::ATOM) : null,
+            'updatedAt' => $this->getUpdatedAt() ? $this->getUpdatedAt()->format(DateTimeInterface::ATOM) : null,
+            'triggeredAt' => $this->getTriggeredAt() ? $this->getTriggeredAt()->format(DateTimeInterface::ATOM) : null,
+            'platform' => $this->getPlatform(),
+            'timeout' => $this->getTimeout(),
+            'totalJobCount' => $this->getTotalJobCount(),
+            'totalErrorCount' => $this->getTotalErrorCount(),
+            'errorCount' => $this->getErrorCount(),
+        ];
+    }
+
     public function getId(): ?string
     {
         return $this->id;
