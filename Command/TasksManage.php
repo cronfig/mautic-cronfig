@@ -18,6 +18,8 @@ use MauticPlugin\CronfigBundle\TaskService\TaskManager;
 
 class TasksManage extends ContainerAwareCommand
 {
+    public const COMMAND = 'cronfig:tasks:manage';
+
     /**
      * @var TaskManager
      */
@@ -34,7 +36,7 @@ class TasksManage extends ContainerAwareCommand
      */
     protected function configure(): void
     {
-        $this->setName('cronfig:tasks:manage')
+        $this->setName(self::COMMAND)
             ->setDescription('Finds tasks that need an active cron task to work and creates missing tasks and/or disables tasks that are not necessary.');
         parent::configure();
     }
