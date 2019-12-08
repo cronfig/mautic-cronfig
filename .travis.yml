@@ -22,6 +22,7 @@ before_script:
   - cd ..
   - git clone https://github.com/mautic/mautic.git mautic
   - cd mautic
+  - git checkout 3.x # remove this once M3 is in the master branch.
   - composer install
   - mv $TRAVIS_BUILD_DIR plugins
   - mv plugins/mautic-cronfig plugins/CronfigBundle
