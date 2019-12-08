@@ -24,6 +24,20 @@ class TaskStatusProvider
      */
     private $coreParametersHelper;
 
+    /**
+     * Cached result of the query.
+     *
+     * @var bool|null
+     */
+    private $segmentsAreActive;
+
+    /**
+     * Cached result of the query.
+     *
+     * @var bool|null
+     */
+    private $campaignsAreActive;
+
     public function __construct(
         Connection $connection,
         CoreParametersHelper $coreParametersHelper
@@ -34,22 +48,30 @@ class TaskStatusProvider
 
     public function segmentsAreActive(): bool
     {
-        $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select('COUNT(*)');
-        $queryBuilder->from("{$this->coreParametersHelper->getParameter('db_table_prefix')}lead_lists");
-        $queryBuilder->where('is_published = 1');
-        $queryBuilder->andWhere('is_published != "a:0:{}"');
+        if (null !== $this->segmentsAreActive) {
+            $queryBuilder = $this->connection->createQueryBuilder();
+            $queryBuilder->select('COUNT(*)');
+            $queryBuilder->from("{$this->coreParametersHelper->getParameter('db_table_prefix')}lead_lists");
+            $queryBuilder->where('is_published = 1');
+            $queryBuilder->andWhere('is_published != "a:0:{}"');
 
-        return (bool) $queryBuilder->execute()->fetchColumn();
+            $this->segmentsAreActive = (bool) $queryBuilder->execute()->fetchColumn();
+        }
+
+        return $this->segmentsAreActive;
     }
 
     public function campaignsAreActive(): bool
     {
-        $queryBuilder = $this->connection->createQueryBuilder();
-        $queryBuilder->select('COUNT(*)');
-        $queryBuilder->from("{$this->coreParametersHelper->getParameter('db_table_prefix')}campaigns");
-        $queryBuilder->where('is_published = 1');
+        if (null === $this->campaignsAreActive) {
+            $queryBuilder = $this->connection->createQueryBuilder();
+            $queryBuilder->select('COUNT(*)');
+            $queryBuilder->from("{$this->coreParametersHelper->getParameter('db_table_prefix')}campaigns");
+            $queryBuilder->where('is_published = 1');
 
-        return (bool) $queryBuilder->execute()->fetchColumn();
+            $this->campaignsAreActive = (bool) $queryBuilder->execute()->fetchColumn();
+        }
+
+        return $this->campaignsAreActive;
     }
 }
