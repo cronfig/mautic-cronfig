@@ -48,7 +48,7 @@ class TaskStatusProvider
 
     public function segmentsAreActive(): bool
     {
-        if (null !== $this->segmentsAreActive) {
+        if (null === $this->segmentsAreActive) {
             $queryBuilder = $this->connection->createQueryBuilder();
             $queryBuilder->select('COUNT(*)');
             $queryBuilder->from("{$this->coreParametersHelper->getParameter('db_table_prefix')}lead_lists");
