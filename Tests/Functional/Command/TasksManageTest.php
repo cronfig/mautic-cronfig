@@ -10,6 +10,7 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Functional\Command;
 
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -34,9 +35,11 @@ class TasksManageTest extends KernelTestCase
         $apiConfig = $this->createMock(Config::class);
         $apiConnection = $this->createMock(Connection::class);
         $taskStatusProvider = $this->createMock(TaskStatusProvider::class);
+        $coreParametersHelper = $this->createMock(CoreParametersHelper::class);
         $apiConfig->method('getApiKey')->willReturn('test_api_key');
         $taskStatusProvider->method('segmentsAreActive')->willReturn(false);
         $taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $coreParametersHelper->method('getParameter')->with('site_url')->willReturn('http://mautic.test');
         $apiConnection->expects($this->exactly(1))
             ->method('query')
             ->with($this->getMeQuery())
@@ -46,6 +49,7 @@ class TasksManageTest extends KernelTestCase
         $container->set('cronfig.api.config', $apiConfig);
         $container->set('cronfig.api.connection', $apiConnection);
         $container->set('cronfig.provider.task_status', $taskStatusProvider);
+        $container->set('mautic.helper.core_parameters', $coreParametersHelper);
         $application = new Application($kernel);
         $command = $application->find(TasksManage::COMMAND);
         $commandTester = new CommandTester($command);
