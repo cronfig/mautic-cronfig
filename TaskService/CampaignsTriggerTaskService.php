@@ -10,7 +10,7 @@
 namespace MauticPlugin\CronfigBundle\TaskService;
 
 use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
-use Symfony\Component\Routing\RouterInterface;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
 
 class CampaignsTriggerTaskService extends AbstractTaskService
 {
@@ -21,9 +21,9 @@ class CampaignsTriggerTaskService extends AbstractTaskService
      */
     private $taskStatusProvider;
 
-    public function __construct(RouterInterface $router, TaskStatusProvider $taskStatusProvider)
+    public function __construct(CoreParametersHelper $coreParametersHelper, TaskStatusProvider $taskStatusProvider)
     {
-        parent::__construct($router);
+        parent::__construct($coreParametersHelper);
         $this->taskStatusProvider = $taskStatusProvider;
     }
 

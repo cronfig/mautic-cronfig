@@ -97,21 +97,21 @@ return [
             'cronfig.task_service.segments_update' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\SegmentsUpdateTaskService::class,
                 'arguments' => [
-                    'router',
+                    'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.campaigns_update' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsUpdateTaskService::class,
                 'arguments' => [
-                    'router',
+                    'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.campaigns_trigger' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsTriggerTaskService::class,
                 'arguments' => [
-                    'router',
+                    'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],

@@ -9,9 +9,8 @@
 
 namespace MauticPlugin\CronfigBundle\TaskService;
 
-use Symfony\Component\Routing\RouterInterface;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 abstract class AbstractTaskService implements TaskServiceInterface
@@ -19,9 +18,9 @@ abstract class AbstractTaskService implements TaskServiceInterface
     public const COMMAND = 'undefined';
 
     /**
-     * @var RouterInterface
+     * @var CoreParametersHelper
      */
-    protected $router;
+    protected $coreParametersHelper;
 
     /**
      * Tasks that exists in the Cronfig.io service.
@@ -30,9 +29,9 @@ abstract class AbstractTaskService implements TaskServiceInterface
      */
     protected $tasks;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(CoreParametersHelper $coreParametersHelper)
     {
-        $this->router = $router;
+        $this->coreParametersHelper = $coreParametersHelper;
         $this->tasks = new TaskCollection();
     }
 
@@ -116,6 +115,6 @@ abstract class AbstractTaskService implements TaskServiceInterface
 
     private function getMauticUrl(): string
     {
-        return trim($this->router->generate('mautic_base_index', [], UrlGeneratorInterface::ABSOLUTE_URL), '/');
+        return trim($this->coreParametersHelper->getParameter('site_url'), '/');
     }
 }
