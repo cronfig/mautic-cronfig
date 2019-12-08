@@ -39,17 +39,9 @@ class CronfigModelTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->coreParametersHelper = $this->getMockBuilder(CoreParametersHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->configurator = $this->getMockBuilder(Configurator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->cacheHelper = $this->getMockBuilder(CacheHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
+        $this->configurator = $this->createMock(Configurator::class);
+        $this->cacheHelper = $this->createMock(CacheHelper::class);
 
         $this->cronfigModel = new CronfigModel(
             $this->coreParametersHelper,
@@ -68,7 +60,7 @@ class CronfigModelTest extends \PHPUnit\Framework\TestCase
     {
         $commands = $this->cronfigModel->getCommands();
 
-        foreach ($commands as $command => $config) {
+        foreach ($commands as $config) {
             $this->assertTrue(!empty($config['title']));
             $this->assertTrue(!empty($config['description']));
         }
@@ -78,7 +70,7 @@ class CronfigModelTest extends \PHPUnit\Framework\TestCase
     {
         $commands = $this->cronfigModel->getCommandsWithUrls('https://cronfig.io/', 'some-secret');
 
-        foreach ($commands as $command => $config) {
+        foreach ($commands as $config) {
             $this->assertTrue(!empty($config['title']));
             $this->assertTrue(!empty($config['description']));
             $this->assertTrue(!empty($config['url']));
