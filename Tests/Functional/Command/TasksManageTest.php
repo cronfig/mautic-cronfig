@@ -18,9 +18,56 @@ use MauticPlugin\CronfigBundle\Command\TasksManage;
 use MauticPlugin\CronfigBundle\Api\Config;
 use MauticPlugin\CronfigBundle\Api\Connection;
 use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TasksManageTest extends KernelTestCase
 {
+    /**
+     * @var Config|MockObject
+     */
+    private $apiConfig;
+
+    /**
+     * @var Connection|MockObject
+     */
+    private $apiConnection;
+
+    /**
+     * @var TaskStatusProvider|MockObject
+     */
+    private $taskStatusProvider;
+
+    /**
+     * @var CoreParametersHelper|MockObject
+     */
+    private $coreParametersHelper;
+
+    /**
+     * @var CommandTester
+     */
+    private $commandTester;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->apiConfig = $this->createMock(Config::class);
+        $this->apiConnection = $this->createMock(Connection::class);
+        $this->taskStatusProvider = $this->createMock(TaskStatusProvider::class);
+        $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
+
+        $kernel = static::bootKernel();
+        $container = $kernel->getContainer();
+
+        $container->set('cronfig.api.config', $this->apiConfig);
+        $container->set('cronfig.api.connection', $this->apiConnection);
+        $container->set('cronfig.provider.task_status', $this->taskStatusProvider);
+        $container->set('mautic.helper.core_parameters', $this->coreParametersHelper);
+
+        $application = new Application($kernel);
+        $this->commandTester = new CommandTester($application->find(TasksManage::COMMAND));
+    }
+
     public function testNoTasksGetsCreatedIfMauticTasksAreOff()
     {
         $mePayload = [
@@ -32,30 +79,19 @@ class TasksManageTest extends KernelTestCase
                 ],
             ],
         ];
-        $apiConfig = $this->createMock(Config::class);
-        $apiConnection = $this->createMock(Connection::class);
-        $taskStatusProvider = $this->createMock(TaskStatusProvider::class);
-        $coreParametersHelper = $this->createMock(CoreParametersHelper::class);
-        $apiConfig->method('getApiKey')->willReturn('test_api_key');
-        $taskStatusProvider->method('segmentsAreActive')->willReturn(false);
-        $taskStatusProvider->method('campaignsAreActive')->willReturn(false);
-        $coreParametersHelper->method('getParameter')->with('site_url')->willReturn('http://mautic.test');
-        $apiConnection->expects($this->exactly(1))
+        
+        $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
+        $this->taskStatusProvider->method('segmentsAreActive')->willReturn(false);
+        $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
+        $this->apiConnection->expects($this->exactly(1))
             ->method('query')
             ->with($this->getMeQuery())
             ->willReturn($mePayload);
-        $kernel = static::bootKernel();
-        $container = $kernel->getContainer();
-        $container->set('cronfig.api.config', $apiConfig);
-        $container->set('cronfig.api.connection', $apiConnection);
-        $container->set('cronfig.provider.task_status', $taskStatusProvider);
-        $container->set('mautic.helper.core_parameters', $coreParametersHelper);
-        $application = new Application($kernel);
-        $command = $application->find(TasksManage::COMMAND);
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
+        
+        $this->commandTester->execute([]);
 
-        $this->assertSame(0, $commandTester->getStatusCode());
+        $this->assertSame(0, $this->commandTester->getStatusCode());
     }
 
     public function testCronfigTasksGetCreatedIfNoneExist()
@@ -73,7 +109,7 @@ class TasksManageTest extends KernelTestCase
             'data' => [
                 'createTask' => [
                     'id' => 'some_id',
-                    'url' => 'http://mautic.test/cronfig/some-command',
+                    'url' => 'https://mautic.test/cronfig/some-command',
                     'title' => 'Test task',
                     'platform' => 'Mautic',
                     'status' => 'active',
@@ -88,13 +124,11 @@ class TasksManageTest extends KernelTestCase
                 ],
             ],
         ];
-        $apiConfig = $this->createMock(Config::class);
-        $apiConnection = $this->createMock(Connection::class);
-        $taskStatusProvider = $this->createMock(TaskStatusProvider::class);
-        $apiConfig->method('getApiKey')->willReturn('test_api_key');
-        $taskStatusProvider->method('segmentsAreActive')->willReturn(true);
-        $taskStatusProvider->method('campaignsAreActive')->willReturn(true);
-        $apiConnection->expects($this->exactly(4))
+        $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
+        $this->taskStatusProvider->method('segmentsAreActive')->willReturn(true);
+        $this->taskStatusProvider->method('campaignsAreActive')->willReturn(true);
+        $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
+        $this->apiConnection->expects($this->exactly(4))
             ->method('query')
             ->withConsecutive(
                 [$this->getMeQuery()],
@@ -108,17 +142,9 @@ class TasksManageTest extends KernelTestCase
                 $createSegmentTaskPayload,
                 $createSegmentTaskPayload
             );
-        $kernel = static::bootKernel();
-        $container = $kernel->getContainer();
-        $container->set('cronfig.api.config', $apiConfig);
-        $container->set('cronfig.api.connection', $apiConnection);
-        $container->set('cronfig.provider.task_status', $taskStatusProvider);
-        $application = new Application($kernel);
-        $command = $application->find(TasksManage::COMMAND);
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([]);
+        $this->commandTester->execute([]);
 
-        $this->assertSame(0, $commandTester->getStatusCode());
+        $this->assertSame(0, $this->commandTester->getStatusCode());
     }
 
     // @todo create test to cover stopping the Cronfig task if the Mautic task is stopped.
@@ -155,7 +181,7 @@ class TasksManageTest extends KernelTestCase
     {
         return 'mutation {
     createTask(
-        url: "http://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key="
+        url: "https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key="
         title: "Test task"
         platform: "Mautic"
     ) {
@@ -179,7 +205,7 @@ class TasksManageTest extends KernelTestCase
     {
         return 'mutation {
     createTask(
-        url: "http://mautic.test/cronfig/mautic%3Acampaigns%3Aupdate?secret_key="
+        url: "https://mautic.test/cronfig/mautic%3Acampaigns%3Aupdate?secret_key="
         title: "Test task"
         platform: "Mautic"
     ) {
@@ -203,7 +229,7 @@ class TasksManageTest extends KernelTestCase
     {
         return 'mutation {
     createTask(
-        url: "http://mautic.test/cronfig/mautic%3Acampaigns%3Atrigger?secret_key="
+        url: "https://mautic.test/cronfig/mautic%3Acampaigns%3Atrigger?secret_key="
         title: "Test task"
         platform: "Mautic"
     ) {
