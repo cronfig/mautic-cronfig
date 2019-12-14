@@ -10,12 +10,7 @@ cache:
     - $HOME/.composer/cache
 
 before_install:
-  # turn off XDebug
-  - phpenv config-rm xdebug.ini || return
-
-  # install dependencies in parallel
-  - travis_retry composer global require hirak/prestissimo
-
+  - travis_retry composer global require hirak/prestissimo # install dependencies in parallel
   - composer global require phpstan/phpstan-shim:0.8.5
 
 before_script:
@@ -26,10 +21,11 @@ before_script:
   - composer install
   - mv $TRAVIS_BUILD_DIR plugins
   - mv plugins/mautic-cronfig plugins/CronfigBundle
+  - cd plugins/CronfigBundle
+  - composer install
 
 script:
-  - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
-  - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff --rules=@Symfony
-  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle
-  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Controller -l 1
-  - $HOME/.composer/vendor/phpstan/phpstan-shim/phpstan.phar analyse plugins/CronfigBundle/Model -l 7
+  - composer codecov
+  - composer phpstan
+  - composer csfixer
+  - bash <(curl -s https://codecov.io/bash)

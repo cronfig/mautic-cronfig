@@ -8,27 +8,28 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-namespace MauticPlugin\CronfigBundle\Tests\Model;
+namespace MauticPlugin\CronfigBundle\Tests\Unit\Model;
 
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CronfigModelTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var CoreParametersHelper|\PHPUnit_Framework_MockObject_MockBuilder
+     * @var CoreParametersHelper|MockObject
      */
     private $coreParametersHelper;
 
     /**
-     * @var Configurator|\PHPUnit_Framework_MockObject_MockBuilder
+     * @var Configurator|MockObject
      */
     private $configurator;
 
     /**
-     * @var CacheHelper|\PHPUnit_Framework_MockObject_MockBuilder
+     * @var CacheHelper|MockObject
      */
     private $cacheHelper;
 

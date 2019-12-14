@@ -42,7 +42,7 @@ class TaskManager
         $taskServices = $this->taskServiceProvider->getTaskServiceCollection();
 
         return $taskServices->map(function (TaskServiceInterface $taskService) use ($allTasks) {
-            return $taskService->setTasks($taskService->findMatchingTasks($allTasks));
+            $taskService->setTasks($taskService->findMatchingTasks($allTasks));
         });
     }
 

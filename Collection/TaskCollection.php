@@ -29,7 +29,7 @@ class TaskCollection implements Iterator, Countable
     private $position = 0;
 
     /**
-     * @param Task[] $recors
+     * @param Task[] $records
      */
     public function __construct(array $records = [])
     {

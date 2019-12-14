@@ -12,10 +12,8 @@ namespace MauticPlugin\CronfigBundle\Controller;
 use Mautic\CoreBundle\Controller\AjaxController as CommonAjaxController;
 use Mautic\CoreBundle\Helper\InputHelper;
 use Symfony\Component\HttpFoundation\Request;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
-/**
- * Class AjaxController.
- */
 class AjaxController extends CommonAjaxController
 {
     /**
@@ -27,6 +25,8 @@ class AjaxController extends CommonAjaxController
     {
         $apiKey = InputHelper::clean($request->request->get('apiKey'));
         $response = ['success' => 0];
+
+        /** @var CronfigModel $model */
         $model = $this->getModel('cronfig');
 
         try {

@@ -42,8 +42,8 @@ class CronfigModel extends AbstractCommonModel
     public function __construct(
         CoreParametersHelper $coreParametersHelper,
         Configurator $configurator,
-        CacheHelper $cacheHelper)
-    {
+        CacheHelper $cacheHelper
+    ) {
         $this->config = $coreParametersHelper->getParameter('cronfig');
         $this->configurator = $configurator;
         $this->cache = $cacheHelper;
@@ -131,7 +131,7 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function saveApiKey($apiKey)
     {
