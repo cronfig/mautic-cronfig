@@ -85,13 +85,13 @@ return [
             'cronfig.subscriber.campaign' => [
                 'class' => \MauticPlugin\CronfigBundle\EventListener\CampaignSubscriber::class,
                 'arguments' => [
-                    'database_connection',
+                    'cronfig.task_service.manager',
                 ],
             ],
             'cronfig.subscriber.segment' => [
                 'class' => \MauticPlugin\CronfigBundle\EventListener\SegmentSubscriber::class,
                 'arguments' => [
-                    'database_connection',
+                    'cronfig.task_service.manager',
                 ],
             ],
         ],

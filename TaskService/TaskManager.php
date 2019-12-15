@@ -33,8 +33,6 @@ class TaskManager
 
     /**
      * Adds matching Tasks to the right TaskServices.
-     *
-     * @return TaskServiceCollection
      */
     public function setMatchingTasks(): TaskServiceCollection
     {
@@ -49,8 +47,6 @@ class TaskManager
     /**
      * Creates new tasks via API in the Cronfig.io service if there is a need for it.
      * Canceles active tasks if there is no need for them anymore.
-     *
-     * @return TaskServiceCollection
      */
     public function manageTasks(): TaskServiceCollection
     {
