@@ -97,16 +97,18 @@ abstract class AbstractTaskService implements TaskServiceInterface
         $needsTask = $this->needsBackgroundJob();
 
         if ($needsTask && 0 === $activeTasks->count() && $stoppedTasks->count() > 0) {
-            foreach ($stoppedTasks as $stoppedTask) {
-                $stoppedTask->setStatus(Task::STATUS_ACTIVE);
+            $stoppedTasks->rewind();
+            $taskToActivate = $stoppedTasks->current();
+            $taskToActivate->setStatus(Task::STATUS_ACTIVE);
 
-                return new TaskCollection([$stoppedTask]);
-            }
+            return new TaskCollection([$taskToActivate]);
         }
 
         if (!$needsTask && $activeTasks->count() > 0) {
             return $activeTasks->map(function (Task $task) {
                 $task->setStatus(Task::STATUS_STOPPED);
+
+                return $task;
             });
         }
 
