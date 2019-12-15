@@ -15,8 +15,8 @@ use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
 
 class Config
 {
-    private const CACHE_TOKEN_API_KEY = 'cronfig_api_token';
-    private const CACHE_TOKEN_JWT_KEY = 'cronfig_jwt_token';
+    public const CACHE_TOKEN_API_KEY = 'cronfig_api_token';
+    public const CACHE_TOKEN_JWT_KEY = 'cronfig_jwt_token';
 
     /**
      * @var CacheStorageHelper
@@ -30,7 +30,7 @@ class Config
 
     public function getEndpoint(): string
     {
-        return 'http://127.0.0.1:3000/graphql';
+        return 'http://127.0.0.1:3000/graphql'; // @todo change for production or make configurable.
     }
 
     /**
