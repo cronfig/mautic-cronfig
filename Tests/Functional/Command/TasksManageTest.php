@@ -19,6 +19,7 @@ use MauticPlugin\CronfigBundle\Api\Config;
 use MauticPlugin\CronfigBundle\Api\Connection;
 use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 class TasksManageTest extends KernelTestCase
 {
@@ -94,7 +95,7 @@ class TasksManageTest extends KernelTestCase
         $this->assertSame(0, $this->commandTester->getStatusCode());
     }
 
-    public function testCronfigTasksGetCreatedIfNoneExist()
+    public function testCronfigTasksGetCreatedIfNoneCronfigTasksExist()
     {
         $mePayload = [
             'data' => [
@@ -112,7 +113,7 @@ class TasksManageTest extends KernelTestCase
                     'url' => 'https://mautic.test/cronfig/some-command',
                     'title' => 'Test task',
                     'platform' => 'Mautic',
-                    'status' => 'active',
+                    'status' => Task::STATUS_ACTIVE,
                     'period' => 30,
                     'timeout' => 5,
                     'createdAt' => '2019-12-08T20:24:00',
@@ -147,8 +148,141 @@ class TasksManageTest extends KernelTestCase
         $this->assertSame(0, $this->commandTester->getStatusCode());
     }
 
-    // @todo create test to cover stopping the Cronfig task if the Mautic task is stopped.
-    // @todo create test to cover activating the Cronfig task if the Mautic task is activated.
+    /**
+     * Test create test to cover stopping the Cronfig task if the Mautic task is stopped.
+     */
+    public function testExistingCronfigTasksGetStoppedIfMauticTasksAreOff()
+    {
+        $mePayload = [
+            'data' => [
+                'me' => [
+                    'tasks' => [
+                        'list' => [
+                            [
+                                'id' => 'some_id',
+                                'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                                'title' => 'Test task',
+                                'platform' => 'Mautic',
+                                'status' => Task::STATUS_ACTIVE,
+                                'period' => 30,
+                                'timeout' => 5,
+                                'createdAt' => '2019-12-08T20:24:00',
+                                'updatedAt' => null,
+                                'triggeredAt' => null,
+                                'totalJobCount' => 1,
+                                'totalErrorCount' => 0,
+                                'errorCount' => 0,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $stopSegmentTaskPayload = [
+            'data' => [
+                'updateTask' => [
+                    'id' => 'some_id',
+                    'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                    'title' => 'Test task',
+                    'platform' => 'Mautic',
+                    'status' => Task::STATUS_STOPPED,
+                    'period' => 30,
+                    'timeout' => 5,
+                    'createdAt' => '2019-12-08T20:24:00',
+                    'updatedAt' => null,
+                    'triggeredAt' => null,
+                    'totalJobCount' => 1,
+                    'totalErrorCount' => 0,
+                    'errorCount' => 0,
+                ],
+            ],
+        ];
+        $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
+        $this->taskStatusProvider->method('segmentsAreActive')->willReturn(false);
+        $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
+        $this->apiConnection->expects($this->exactly(2))
+            ->method('query')
+            ->withConsecutive(
+                [$this->getMeQuery()],
+                [$this->getStopSegmentTaskQuery()]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $mePayload,
+                $stopSegmentTaskPayload
+            );
+        $this->commandTester->execute([]);
+
+        $this->assertSame(0, $this->commandTester->getStatusCode());
+    }
+
+    /**
+     * Test create test to cover activating the Cronfig task if the Mautic task is activated.
+     */
+    public function testExistingCronfigTasksGetStartedIfMauticTasksAreOn()
+    {
+        $mePayload = [
+            'data' => [
+                'me' => [
+                    'tasks' => [
+                        'list' => [
+                            [
+                                'id' => 'some_id',
+                                'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                                'title' => 'Test task',
+                                'platform' => 'Mautic',
+                                'status' => Task::STATUS_STOPPED,
+                                'period' => 30,
+                                'timeout' => 5,
+                                'createdAt' => '2019-12-08T20:24:00',
+                                'updatedAt' => null,
+                                'triggeredAt' => null,
+                                'totalJobCount' => 1,
+                                'totalErrorCount' => 0,
+                                'errorCount' => 0,
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $stopSegmentTaskPayload = [
+            'data' => [
+                'updateTask' => [
+                    'id' => 'some_id',
+                    'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                    'title' => 'Test task',
+                    'platform' => 'Mautic',
+                    'status' => Task::STATUS_ACTIVE,
+                    'period' => 30,
+                    'timeout' => 5,
+                    'createdAt' => '2019-12-08T20:24:00',
+                    'updatedAt' => null,
+                    'triggeredAt' => null,
+                    'totalJobCount' => 1,
+                    'totalErrorCount' => 0,
+                    'errorCount' => 0,
+                ],
+            ],
+        ];
+        $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
+        $this->taskStatusProvider->method('segmentsAreActive')->willReturn(true);
+        $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
+        $this->apiConnection->expects($this->exactly(2))
+            ->method('query')
+            ->withConsecutive(
+                [$this->getMeQuery()],
+                [$this->getActivateSegmentTaskQuery()]
+            )
+            ->willReturnOnConsecutiveCalls(
+                $mePayload,
+                $stopSegmentTaskPayload
+            );
+        $this->commandTester->execute([]);
+
+        $this->assertSame(0, $this->commandTester->getStatusCode());
+    }
 
     private function getMeQuery(): string
     {
@@ -232,6 +366,58 @@ class TasksManageTest extends KernelTestCase
         url: "https://mautic.test/cronfig/mautic%3Acampaigns%3Atrigger?secret_key="
         title: "Test task"
         platform: "Mautic"
+    ) {
+        id
+        url
+        status
+        platform
+        period
+        timeout
+        createdAt
+        updatedAt
+        triggeredAt
+        totalJobCount
+        totalErrorCount
+        errorCount
+    }
+}';
+    }
+
+    private function getStopSegmentTaskQuery(): string
+    {
+        return 'mutation {
+    updateTask(
+        id: "some_id"
+        url: "https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key="
+        platform: "Mautic"
+        status: "stopped"
+        period: 30
+    ) {
+        id
+        url
+        status
+        platform
+        period
+        timeout
+        createdAt
+        updatedAt
+        triggeredAt
+        totalJobCount
+        totalErrorCount
+        errorCount
+    }
+}';
+    }
+
+    private function getActivateSegmentTaskQuery(): string
+    {
+        return 'mutation {
+    updateTask(
+        id: "some_id"
+        url: "https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key="
+        platform: "Mautic"
+        status: "active"
+        period: 30
     ) {
         id
         url

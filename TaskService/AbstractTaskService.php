@@ -93,14 +93,14 @@ abstract class AbstractTaskService implements TaskServiceInterface
     public function getTasksToUpdate(): TaskCollection
     {
         $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
-        $canceledTasks = $this->getTasks()->filterByStatus(Task::STATUS_CANCELED);
+        $stoppedTasks = $this->getTasks()->filterByStatus(Task::STATUS_STOPPED);
         $needsTask = $this->needsBackgroundJob();
 
-        if ($needsTask && 0 === $activeTasks->count() && $canceledTasks->count() > 0) {
-            foreach ($canceledTasks as $canceledTask) {
-                $canceledTask->setStatus(Task::STATUS_ACTIVE);
+        if ($needsTask && 0 === $activeTasks->count() && $stoppedTasks->count() > 0) {
+            foreach ($stoppedTasks as $stoppedTask) {
+                $stoppedTask->setStatus(Task::STATUS_ACTIVE);
 
-                return new TaskCollection([$canceledTask]);
+                return new TaskCollection([$stoppedTask]);
             }
         }
 
