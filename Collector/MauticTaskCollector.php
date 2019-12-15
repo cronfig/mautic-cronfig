@@ -7,12 +7,15 @@
  * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  */
 
-namespace MauticPlugin\CronfigBundle\Provider;
+namespace MauticPlugin\CronfigBundle\Collector;
 
 use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 use MauticPlugin\CronfigBundle\Collection\TaskServiceCollection;
 
-class TaskServiceProvider
+/**
+ * Collects Mautic task services.
+ */
+class MauticTaskCollector
 {
     /**
      * @var TaskServiceCollection
@@ -24,7 +27,7 @@ class TaskServiceProvider
         $this->taskServiceCollection = new TaskServiceCollection();
     }
 
-    public function addTaskService(TaskServiceInterface $taskService): void
+    public function addTask(TaskServiceInterface $taskService): void
     {
         $this->taskServiceCollection->add($taskService);
     }

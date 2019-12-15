@@ -67,10 +67,12 @@ return [
                 ],
             ],
         ],
-        'providers' => [
-            'cronfig.provider.task_service' => [
-                'class' => \MauticPlugin\CronfigBundle\Provider\TaskServiceProvider::class,
+        'collectors' => [
+            'cronfig.collector.mautic_task' => [
+                'class' => \MauticPlugin\CronfigBundle\Collector\MauticTaskCollector::class,
             ],
+        ],
+        'providers' => [
             'cronfig.provider.task_status' => [
                 'class' => \MauticPlugin\CronfigBundle\Provider\TaskStatusProvider::class,
                 'arguments' => [
@@ -118,7 +120,7 @@ return [
             'cronfig.task_service.manager' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\TaskManager::class,
                 'arguments' => [
-                    'cronfig.provider.task_service',
+                    'cronfig.collector.mautic_task',
                     'cronfig.api.repository',
                 ],
             ],

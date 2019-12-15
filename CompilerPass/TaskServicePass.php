@@ -25,12 +25,12 @@ class TaskServicePass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $containerBuilder): void
     {
-        /** @var Definition $taskServiceProvider */
-        $taskServiceProvider = $containerBuilder->findDefinition('cronfig.provider.task_service');
+        /** @var Definition $mauticTaskCollector */
+        $mauticTaskCollector = $containerBuilder->findDefinition('cronfig.collector.mautic_task');
 
-        array_map(function (string $taskServiceDiKey) use ($containerBuilder, $taskServiceProvider) {
-            $taskService = $containerBuilder->findDefinition($taskServiceDiKey);
-            $taskServiceProvider->addMethodCall('addTaskService', [$taskService]);
+        array_map(function (string $mauticTaskDiKey) use ($containerBuilder, $mauticTaskCollector) {
+            $mauticTask = $containerBuilder->findDefinition($mauticTaskDiKey);
+            $mauticTaskCollector->addMethodCall('addTask', [$mauticTask]);
         }, $this->findAllKeysByType($containerBuilder, TaskServiceInterface::class));
     }
 
