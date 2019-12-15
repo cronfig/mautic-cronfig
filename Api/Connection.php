@@ -33,6 +33,9 @@ class Connection
      */
     private $queryBuilder;
 
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     public function __construct(

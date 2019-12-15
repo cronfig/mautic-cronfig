@@ -1,0 +1,78 @@
+<?php
+
+/*
+ * @package     Cronfig Mautic Bundle
+ * @copyright   2016 Cronfig.io. All rights reserved
+ * @author      Jan Linhart
+ * @link        http://cronfig.io
+ * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
+ */
+
+namespace MauticPlugin\CronfigBundle\Tests\Unit\Api;
+
+use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\MockObject\MockObject;
+use MauticPlugin\CronfigBundle\Api\Config;
+use GuzzleHttp\Client;
+use MauticPlugin\CronfigBundle\Api\Connection;
+use MauticPlugin\CronfigBundle\Api\QueryBuilder;
+use Psr\Log\LoggerInterface;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use Http\Adapter\Guzzle6\Client as GuzzleClient;
+
+class ConnectionTest extends \PHPUnit\Framework\TestCase
+{
+    /**
+     * @var Config|MockObject
+     */
+    private $apiConfig;
+
+    /**
+     * @var QueryBuilder|MockObject
+     */
+    private $queryBuilder;
+
+    /**
+     * @var LoggerInterface|MockObject
+     */
+    private $logger;
+
+    protected function setUp()
+    {
+        $this->apiConfig = $this->createMock(Config::class);
+        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+    }
+
+    public function testQueryWhenJwtCached()
+    {
+        $client = new Client([
+            'handler' => HandlerStack::create(
+                new MockHandler([
+                    new Response(
+                        200,
+                        ['X-Foo' => 'Bar'],
+                        '{"some":"response"}'
+                    ),
+                ])
+            )
+        ]);
+
+        $connection = new Connection(
+            $this->apiConfig,
+            new GuzzleClient($client),
+            $this->queryBuilder,
+            $this->logger
+        );
+
+        $this->apiConfig->expects($this->once())
+            ->method('getJwt')
+            ->willReturn('some_jwt_token');
+
+        $this->assertSame(
+            ['some' => 'response'],
+            $connection->query('some GQL query')
+        );
+    }
+}
