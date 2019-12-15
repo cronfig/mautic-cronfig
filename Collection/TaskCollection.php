@@ -33,7 +33,7 @@ class TaskCollection implements Iterator, Countable
      */
     public function __construct(array $records = [])
     {
-        $this->records = $records;
+        $this->records = array_values($records);
     }
 
     public static function makeFromApi(array $payload): TaskCollection
@@ -49,9 +49,7 @@ class TaskCollection implements Iterator, Countable
 
     public function map(callable $callback): TaskCollection
     {
-        array_map($callback, $this->records);
-
-        return $this;
+        return new self(array_map($callback, $this->records));
     }
 
     public function add(Task $task): void
@@ -61,7 +59,7 @@ class TaskCollection implements Iterator, Countable
 
     public function filter(callable $callback): TaskCollection
     {
-        return new self(array_filter($this->records, $callback));
+        return new self(array_values(array_filter($this->records, $callback)));
     }
 
     public function filterByStatus(string $status): TaskCollection

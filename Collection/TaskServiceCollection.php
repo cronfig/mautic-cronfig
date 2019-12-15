@@ -33,7 +33,7 @@ class TaskServiceCollection implements Iterator, Countable
      */
     public function __construct(array $records = [])
     {
-        $this->records = $records;
+        $this->records = array_values($records);
     }
 
     public function add(TaskServiceInterface $task): void
@@ -43,9 +43,7 @@ class TaskServiceCollection implements Iterator, Countable
 
     public function map(callable $callback): TaskServiceCollection
     {
-        array_map($callback, $this->records);
-
-        return $this;
+        return new self(array_map($callback, $this->records));
     }
 
     /**
