@@ -20,6 +20,7 @@ use Psr\Log\LoggerInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle6\Client as GuzzleClient;
+use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
 
 class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +30,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     private $apiConfig;
 
     /**
-     * @var QueryBuilder|MockObject
+     * @var QueryBuilder
      */
     private $queryBuilder;
 
@@ -41,7 +42,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->apiConfig = $this->createMock(Config::class);
-        $this->queryBuilder = $this->createMock(QueryBuilder::class);
+        $this->queryBuilder = new QueryBuilder();
         $this->logger = $this->createMock(LoggerInterface::class);
     }
 
@@ -69,6 +70,46 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
         $this->apiConfig->expects($this->once())
             ->method('getJwt')
             ->willReturn('some_jwt_token');
+
+        $this->assertSame(
+            ['some' => 'response'],
+            $connection->query('some GQL query')
+        );
+    }
+
+    public function testQueryWhenJwtMustBeFetchedFirst()
+    {
+        $client = new Client([
+            'handler' => HandlerStack::create(
+                new MockHandler([
+                    new Response(
+                        200,
+                        ['X-Foo' => 'Bar'],
+                        '{"data": {"signIn": {"token": "some_JWT_token"}}}'
+                    ),
+                    new Response(
+                        200,
+                        ['X-Foo' => 'Bar'],
+                        '{"some":"response"}'
+                    ),
+                ])
+            )
+        ]);
+
+        $connection = new Connection(
+            $this->apiConfig,
+            new GuzzleClient($client),
+            $this->queryBuilder,
+            $this->logger
+        );
+
+        $this->apiConfig->expects($this->once())
+            ->method('getJwt')
+            ->willThrowException(new MissingJwtException());
+
+        $this->apiConfig->expects($this->once())
+            ->method('setJwt')
+            ->with('some_JWT_token');
 
         $this->assertSame(
             ['some' => 'response'],
