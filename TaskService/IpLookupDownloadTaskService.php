@@ -31,12 +31,12 @@ class IpLookupDownloadTaskService extends AbstractTaskService
 
     public function needsBackgroundJob(): bool
     {
-        return true;
+        return $this->taskStatusProvider->ipLookupDownloadShouldBeActive();
     }
 
     public function getTasksToCreate(): TaskCollection
     {
-        return parent::getTasksToCreate()->map(function(Task $task) {
+        return parent::getTasksToCreate()->map(function (Task $task) {
             $thirtyDaysInMinutes = 30*24*60;
             $task->setPeriod($thirtyDaysInMinutes);
 

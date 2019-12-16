@@ -35,7 +35,7 @@ class Task
 
     /**
      * In minutes.
-     * 
+     *
      * @var int
      */
     private $period;

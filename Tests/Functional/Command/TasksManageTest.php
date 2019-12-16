@@ -84,6 +84,7 @@ class TasksManageTest extends KernelTestCase
         $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
         $this->taskStatusProvider->method('segmentsAreActive')->willReturn(false);
         $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->taskStatusProvider->method('ipLookupDownloadShouldBeActive')->willReturn(false);
         $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
         $this->apiConnection->expects($this->exactly(1))
             ->method('query')
@@ -128,6 +129,7 @@ class TasksManageTest extends KernelTestCase
         $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
         $this->taskStatusProvider->method('segmentsAreActive')->willReturn(true);
         $this->taskStatusProvider->method('campaignsAreActive')->willReturn(true);
+        $this->taskStatusProvider->method('ipLookupDownloadShouldBeActive')->willReturn(false);
         $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
         $this->apiConnection->expects($this->exactly(4))
             ->method('query')
@@ -200,6 +202,7 @@ class TasksManageTest extends KernelTestCase
         $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
         $this->taskStatusProvider->method('segmentsAreActive')->willReturn(false);
         $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->taskStatusProvider->method('ipLookupDownloadShouldBeActive')->willReturn(false);
         $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
         $this->apiConnection->expects($this->exactly(2))
             ->method('query')
@@ -268,6 +271,7 @@ class TasksManageTest extends KernelTestCase
         $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
         $this->taskStatusProvider->method('segmentsAreActive')->willReturn(true);
         $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
+        $this->taskStatusProvider->method('ipLookupDownloadShouldBeActive')->willReturn(false);
         $this->coreParametersHelper->method('getParameter')->with('site_url')->willReturn('https://mautic.test');
         $this->apiConnection->expects($this->exactly(2))
             ->method('query')

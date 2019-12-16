@@ -74,4 +74,9 @@ class TaskStatusProvider
 
         return $this->campaignsAreActive;
     }
+
+    public function ipLookupDownloadShouldBeActive(): bool
+    {
+        return true;
+    }
 }
