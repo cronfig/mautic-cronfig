@@ -34,6 +34,8 @@ class Task
     private $status;
 
     /**
+     * In minutes.
+     * 
      * @var int
      */
     private $period;
@@ -151,6 +153,11 @@ class Task
     public function getPeriod(): int
     {
         return $this->period;
+    }
+
+    public function setPeriod(int $period): void
+    {
+        $this->period = $period;
     }
 
     public function getTimeout(): int

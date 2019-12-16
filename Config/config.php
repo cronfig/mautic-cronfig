@@ -117,6 +117,13 @@ return [
                     'cronfig.provider.task_status',
                 ],
             ],
+            'cronfig.task_service.ip_lookup_download' => [
+                'class' => \MauticPlugin\CronfigBundle\TaskService\IpLookupDownloadTaskService::class,
+                'arguments' => [
+                    'mautic.helper.core_parameters',
+                    'cronfig.provider.task_status',
+                ],
+            ],
             'cronfig.task_service.manager' => [
                 'class' => \MauticPlugin\CronfigBundle\TaskService\TaskManager::class,
                 'arguments' => [
