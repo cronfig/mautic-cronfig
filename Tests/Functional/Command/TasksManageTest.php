@@ -11,15 +11,15 @@
 namespace MauticPlugin\CronfigBundle\Tests\Functional\Command;
 
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Api\Config;
+use MauticPlugin\CronfigBundle\Api\Connection;
+use MauticPlugin\CronfigBundle\Api\DTO\Task;
+use MauticPlugin\CronfigBundle\Command\TasksManage;
+use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
-use MauticPlugin\CronfigBundle\Command\TasksManage;
-use MauticPlugin\CronfigBundle\Api\Config;
-use MauticPlugin\CronfigBundle\Api\Connection;
-use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
-use PHPUnit\Framework\MockObject\MockObject;
-use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 class TasksManageTest extends KernelTestCase
 {
@@ -52,12 +52,12 @@ class TasksManageTest extends KernelTestCase
     {
         parent::setUp();
 
-        $this->apiConfig = $this->createMock(Config::class);
-        $this->apiConnection = $this->createMock(Connection::class);
-        $this->taskStatusProvider = $this->createMock(TaskStatusProvider::class);
+        $this->apiConfig            = $this->createMock(Config::class);
+        $this->apiConnection        = $this->createMock(Connection::class);
+        $this->taskStatusProvider   = $this->createMock(TaskStatusProvider::class);
         $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
 
-        $kernel = static::bootKernel();
+        $kernel    = static::bootKernel();
         $container = $kernel->getContainer();
 
         $container->set('cronfig.api.config', $this->apiConfig);
@@ -65,7 +65,7 @@ class TasksManageTest extends KernelTestCase
         $container->set('cronfig.provider.task_status', $this->taskStatusProvider);
         $container->set('mautic.helper.core_parameters', $this->coreParametersHelper);
 
-        $application = new Application($kernel);
+        $application         = new Application($kernel);
         $this->commandTester = new CommandTester($application->find(TasksManage::COMMAND));
     }
 
@@ -80,7 +80,7 @@ class TasksManageTest extends KernelTestCase
                 ],
             ],
         ];
-        
+
         $this->apiConfig->method('getApiKey')->willReturn('test_api_key');
         $this->taskStatusProvider->method('segmentsAreActive')->willReturn(false);
         $this->taskStatusProvider->method('campaignsAreActive')->willReturn(false);
@@ -90,7 +90,7 @@ class TasksManageTest extends KernelTestCase
             ->method('query')
             ->with($this->getMeQuery())
             ->willReturn($mePayload);
-        
+
         $this->commandTester->execute([]);
 
         $this->assertSame(0, $this->commandTester->getStatusCode());
@@ -110,19 +110,19 @@ class TasksManageTest extends KernelTestCase
         $createSegmentTaskPayload = [
             'data' => [
                 'createTask' => [
-                    'id' => 'some_id',
-                    'url' => 'https://mautic.test/cronfig/some-command',
-                    'title' => 'Test task',
-                    'platform' => 'Mautic',
-                    'status' => Task::STATUS_ACTIVE,
-                    'period' => 30,
-                    'timeout' => 5,
-                    'createdAt' => '2019-12-08T20:24:00',
-                    'updatedAt' => null,
-                    'triggeredAt' => null,
-                    'totalJobCount' => 1,
+                    'id'              => 'some_id',
+                    'url'             => 'https://mautic.test/cronfig/some-command',
+                    'title'           => 'Test task',
+                    'platform'        => 'Mautic',
+                    'status'          => Task::STATUS_ACTIVE,
+                    'period'          => 30,
+                    'timeout'         => 5,
+                    'createdAt'       => '2019-12-08T20:24:00',
+                    'updatedAt'       => null,
+                    'triggeredAt'     => null,
+                    'totalJobCount'   => 1,
                     'totalErrorCount' => 0,
-                    'errorCount' => 0,
+                    'errorCount'      => 0,
                 ],
             ],
         ];
@@ -161,19 +161,19 @@ class TasksManageTest extends KernelTestCase
                     'tasks' => [
                         'list' => [
                             [
-                                'id' => 'some_id',
-                                'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
-                                'title' => 'Test task',
-                                'platform' => 'Mautic',
-                                'status' => Task::STATUS_ACTIVE,
-                                'period' => 30,
-                                'timeout' => 5,
-                                'createdAt' => '2019-12-08T20:24:00',
-                                'updatedAt' => null,
-                                'triggeredAt' => null,
-                                'totalJobCount' => 1,
+                                'id'              => 'some_id',
+                                'url'             => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                                'title'           => 'Test task',
+                                'platform'        => 'Mautic',
+                                'status'          => Task::STATUS_ACTIVE,
+                                'period'          => 30,
+                                'timeout'         => 5,
+                                'createdAt'       => '2019-12-08T20:24:00',
+                                'updatedAt'       => null,
+                                'triggeredAt'     => null,
+                                'totalJobCount'   => 1,
                                 'totalErrorCount' => 0,
-                                'errorCount' => 0,
+                                'errorCount'      => 0,
                             ],
                         ],
                     ],
@@ -183,19 +183,19 @@ class TasksManageTest extends KernelTestCase
         $stopSegmentTaskPayload = [
             'data' => [
                 'updateTask' => [
-                    'id' => 'some_id',
-                    'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
-                    'title' => 'Test task',
-                    'platform' => 'Mautic',
-                    'status' => Task::STATUS_STOPPED,
-                    'period' => 30,
-                    'timeout' => 5,
-                    'createdAt' => '2019-12-08T20:24:00',
-                    'updatedAt' => null,
-                    'triggeredAt' => null,
-                    'totalJobCount' => 1,
+                    'id'              => 'some_id',
+                    'url'             => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                    'title'           => 'Test task',
+                    'platform'        => 'Mautic',
+                    'status'          => Task::STATUS_STOPPED,
+                    'period'          => 30,
+                    'timeout'         => 5,
+                    'createdAt'       => '2019-12-08T20:24:00',
+                    'updatedAt'       => null,
+                    'triggeredAt'     => null,
+                    'totalJobCount'   => 1,
                     'totalErrorCount' => 0,
-                    'errorCount' => 0,
+                    'errorCount'      => 0,
                 ],
             ],
         ];
@@ -230,19 +230,19 @@ class TasksManageTest extends KernelTestCase
                     'tasks' => [
                         'list' => [
                             [
-                                'id' => 'some_id',
-                                'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
-                                'title' => 'Test task',
-                                'platform' => 'Mautic',
-                                'status' => Task::STATUS_STOPPED,
-                                'period' => 30,
-                                'timeout' => 5,
-                                'createdAt' => '2019-12-08T20:24:00',
-                                'updatedAt' => null,
-                                'triggeredAt' => null,
-                                'totalJobCount' => 1,
+                                'id'              => 'some_id',
+                                'url'             => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                                'title'           => 'Test task',
+                                'platform'        => 'Mautic',
+                                'status'          => Task::STATUS_STOPPED,
+                                'period'          => 30,
+                                'timeout'         => 5,
+                                'createdAt'       => '2019-12-08T20:24:00',
+                                'updatedAt'       => null,
+                                'triggeredAt'     => null,
+                                'totalJobCount'   => 1,
                                 'totalErrorCount' => 0,
-                                'errorCount' => 0,
+                                'errorCount'      => 0,
                             ],
                         ],
                     ],
@@ -252,19 +252,19 @@ class TasksManageTest extends KernelTestCase
         $stopSegmentTaskPayload = [
             'data' => [
                 'updateTask' => [
-                    'id' => 'some_id',
-                    'url' => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
-                    'title' => 'Test task',
-                    'platform' => 'Mautic',
-                    'status' => Task::STATUS_ACTIVE,
-                    'period' => 30,
-                    'timeout' => 5,
-                    'createdAt' => '2019-12-08T20:24:00',
-                    'updatedAt' => null,
-                    'triggeredAt' => null,
-                    'totalJobCount' => 1,
+                    'id'              => 'some_id',
+                    'url'             => 'https://mautic.test/cronfig/mautic%3Asegments%3Aupdate?secret_key=',
+                    'title'           => 'Test task',
+                    'platform'        => 'Mautic',
+                    'status'          => Task::STATUS_ACTIVE,
+                    'period'          => 30,
+                    'timeout'         => 5,
+                    'createdAt'       => '2019-12-08T20:24:00',
+                    'updatedAt'       => null,
+                    'triggeredAt'     => null,
+                    'totalJobCount'   => 1,
                     'totalErrorCount' => 0,
-                    'errorCount' => 0,
+                    'errorCount'      => 0,
                 ],
             ],
         ];

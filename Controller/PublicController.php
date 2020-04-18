@@ -18,17 +18,17 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class PublicController.
  */
-class PublicController extends CommonController
+final class PublicController extends CommonController
 {
     /*
      * @param string $command
      */
     public function triggerAction($command)
     {
-        $response = new Response();
+        $response  = new Response();
         $secretKey = $this->request->query->get('secret_key');
-        $config = $this->factory->getParameter('cronfig');
-        $logger = $this->get('monolog.logger.mautic');
+        $config    = $this->factory->getParameter('cronfig');
+        $logger    = $this->get('monolog.logger.mautic');
 
         if (empty($config['secret_key'])) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
@@ -39,9 +39,9 @@ class PublicController extends CommonController
             $output = 'error: secret key is missing in the request';
             $logger->log('error', 'Cronfig: secret key is missing in the request');
         } elseif ($config['secret_key'] === $secretKey) {
-            $command = explode(' ', urldecode($command));
+            $command    = explode(' ', urldecode($command));
             $errorCount = $this->request->get('error_count', 0);
-            $args = array_merge(['console'], $command);
+            $args       = array_merge(['console'], $command);
 
             if ($errorCount > 2) {
                 // Try to force the command if it failed 2 times before
@@ -49,9 +49,9 @@ class PublicController extends CommonController
             }
 
             try {
-                $input = new ArgvInput($args);
+                $input  = new ArgvInput($args);
                 $output = new BufferedOutput();
-                $app = new Application($this->get('kernel'));
+                $app    = new Application($this->get('kernel'));
                 $app->setAutoExit(false);
                 $result = $app->run($input, $output);
                 $output = $output->fetch();

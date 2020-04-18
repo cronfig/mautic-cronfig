@@ -11,7 +11,7 @@
 
 namespace MauticPlugin\CronfigBundle\Exception;
 
-class MissingApiKeyException extends ApiException
+final class MissingApiKeyException extends ApiException
 {
     public function __construct(string $message = 'API key is missing. Go to the Cronfig plugin configuation form and insert it.')
     {

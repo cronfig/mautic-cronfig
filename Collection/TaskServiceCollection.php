@@ -9,14 +9,14 @@
 
 namespace MauticPlugin\CronfigBundle\Collection;
 
-use Iterator;
 use Countable;
+use Iterator;
 use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 
 /**
  * Holds TaskService objects that were added via DI tag.
  */
-class TaskServiceCollection implements Iterator, Countable
+final class TaskServiceCollection implements Iterator, Countable
 {
     /**
      * @var TaskServiceInterface[]

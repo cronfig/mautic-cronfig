@@ -10,11 +10,11 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Unit\Api;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use Mautic\CoreBundle\Helper\CacheStorageHelper;
 use MauticPlugin\CronfigBundle\Api\Config;
 use MauticPlugin\CronfigBundle\Exception\MissingApiKeyException;
 use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class ConfigTest extends \PHPUnit\Framework\TestCase
 {
@@ -31,7 +31,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->cacheStorageHelper = $this->createMock(CacheStorageHelper::class);
-        $this->config = new Config($this->cacheStorageHelper);
+        $this->config             = new Config($this->cacheStorageHelper);
     }
 
     public function testOnChangeIfPublishedNotChanged()

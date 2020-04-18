@@ -10,12 +10,12 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Unit\Provider;
 
-use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use PHPUnit\Framework\MockObject\MockObject;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
-use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class TaskStatusProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -46,11 +46,11 @@ class TaskStatusProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->connection = $this->createMock(Connection::class);
+        $this->connection           = $this->createMock(Connection::class);
         $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
-        $this->resultStatement = $this->createMock(ResultStatement::class);
-        $this->queryBuilder = new QueryBuilder($this->connection);
-        $this->taskStatusProvider = new TaskStatusProvider(
+        $this->resultStatement      = $this->createMock(ResultStatement::class);
+        $this->queryBuilder         = new QueryBuilder($this->connection);
+        $this->taskStatusProvider   = new TaskStatusProvider(
             $this->connection,
             $this->coreParametersHelper
         );

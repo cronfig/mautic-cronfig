@@ -9,11 +9,11 @@
 
 namespace MauticPlugin\CronfigBundle\TaskService;
 
+use MauticPlugin\CronfigBundle\Api\Repository;
 use MauticPlugin\CronfigBundle\Collection\TaskServiceCollection;
 use MauticPlugin\CronfigBundle\Collector\MauticTaskCollector;
-use MauticPlugin\CronfigBundle\Api\Repository;
 
-class TaskManager
+final class TaskManager
 {
     /**
      * @var MauticTaskCollector
@@ -28,7 +28,7 @@ class TaskManager
     public function __construct(MauticTaskCollector $mauticTaskCollector, Repository $repository)
     {
         $this->mauticTaskCollector = $mauticTaskCollector;
-        $this->repository = $repository;
+        $this->repository          = $repository;
     }
 
     /**
@@ -36,7 +36,7 @@ class TaskManager
      */
     public function setMatchingTasks(): TaskServiceCollection
     {
-        $allTasks = $this->repository->getTaskCollection();
+        $allTasks     = $this->repository->getTaskCollection();
         $taskServices = $this->mauticTaskCollector->getTaskServiceCollection();
 
         return $taskServices->map(function (TaskServiceInterface $taskService) use ($allTasks) {

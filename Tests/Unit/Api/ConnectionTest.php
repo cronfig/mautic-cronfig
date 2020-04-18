@@ -10,17 +10,17 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Unit\Api;
 
-use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\MockObject\MockObject;
-use MauticPlugin\CronfigBundle\Api\Config;
 use GuzzleHttp\Client;
-use MauticPlugin\CronfigBundle\Api\Connection;
-use MauticPlugin\CronfigBundle\Api\QueryBuilder;
-use Psr\Log\LoggerInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use Http\Adapter\Guzzle6\Client as GuzzleClient;
+use MauticPlugin\CronfigBundle\Api\Config;
+use MauticPlugin\CronfigBundle\Api\Connection;
+use MauticPlugin\CronfigBundle\Api\QueryBuilder;
 use MauticPlugin\CronfigBundle\Exception\MissingJwtException;
+use PHPUnit\Framework\MockObject\MockObject;
+use Psr\Log\LoggerInterface;
 
 class ConnectionTest extends \PHPUnit\Framework\TestCase
 {
@@ -41,9 +41,9 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->apiConfig = $this->createMock(Config::class);
+        $this->apiConfig    = $this->createMock(Config::class);
         $this->queryBuilder = new QueryBuilder();
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->logger       = $this->createMock(LoggerInterface::class);
     }
 
     public function testQueryWhenJwtCached()
@@ -57,7 +57,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
                         '{"some":"response"}'
                     ),
                 ])
-            )
+            ),
         ]);
 
         $connection = new Connection(
@@ -93,7 +93,7 @@ class ConnectionTest extends \PHPUnit\Framework\TestCase
                         '{"some":"response"}'
                     ),
                 ])
-            )
+            ),
         ]);
 
         $connection = new Connection(

@@ -12,7 +12,7 @@ namespace MauticPlugin\CronfigBundle\Controller;
 use Mautic\CoreBundle\Controller\CommonController;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
-class CronfigController extends CommonController
+final class CronfigController extends CommonController
 {
     /*
      * Display the Cronfig Login/Dashboard
@@ -20,26 +20,26 @@ class CronfigController extends CommonController
     public function indexAction()
     {
         /** @var CronfigModel $model */
-        $model = $this->getModel('cronfig');
-        $baseUrl = $this->generateUrl('mautic_base_index', [], true);
-        $config = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
-        $email = $this->get('mautic.helper.user')->getUser()->getEmail();
+        $model     = $this->getModel('cronfig');
+        $baseUrl   = $this->generateUrl('mautic_base_index', [], true);
+        $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
+        $email     = $this->get('mautic.helper.user')->getUser()->getEmail();
         $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
-        $apiKey = empty($config['api_key']) ? '' : $config['api_key'];
-        $commands = $model->getCommandsWithUrls($baseUrl, $secretKey);
+        $apiKey    = empty($config['api_key']) ? '' : $config['api_key'];
+        $commands  = $model->getCommandsWithUrls($baseUrl, $secretKey);
 
         return $this->delegateView([
             'viewParameters' => [
-                'title' => 'cronfig.title',
+                'title'    => 'cronfig.title',
                 'commands' => $commands,
-                'email' => $email,
-                'apiKey' => $apiKey,
+                'email'    => $email,
+                'apiKey'   => $apiKey,
             ],
             'contentTemplate' => 'CronfigBundle:Cronfig:index.html.php',
             'passthroughVars' => [
-                'activeLink' => '#cronfig',
+                'activeLink'    => '#cronfig',
                 'mauticContent' => 'cronfig',
-                'route' => $this->generateUrl('cronfig'),
+                'route'         => $this->generateUrl('cronfig'),
             ],
         ]);
     }

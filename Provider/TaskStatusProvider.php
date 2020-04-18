@@ -12,7 +12,7 @@ namespace MauticPlugin\CronfigBundle\Provider;
 use Doctrine\DBAL\Connection;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 
-class TaskStatusProvider
+final class TaskStatusProvider
 {
     /**
      * @var Connection
@@ -42,7 +42,7 @@ class TaskStatusProvider
         Connection $connection,
         CoreParametersHelper $coreParametersHelper
     ) {
-        $this->connection = $connection;
+        $this->connection           = $connection;
         $this->coreParametersHelper = $coreParametersHelper;
     }
 

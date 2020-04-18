@@ -8,23 +8,23 @@
  */
 
 return [
-    'name' => 'Cronfig',
+    'name'        => 'Cronfig',
     'description' => 'Takes care of the cron jobs - makes your Mautic alive.',
-    'version' => '1.0',
-    'author' => 'Cronfig.io',
+    'version'     => '1.0',
+    'author'      => 'Cronfig.io',
 
     'routes' => [
         'main' => [
             'cronfig' => [
-                'path' => '/cronfig',
+                'path'       => '/cronfig',
                 'controller' => 'CronfigBundle:Cronfig:index',
             ],
         ],
         'public' => [
             'cronfig_public' => [
-                'path' => '/cronfig/{command}',
+                'path'       => '/cronfig/{command}',
                 'controller' => 'CronfigBundle:Public:trigger',
-                'defaults' => [
+                'defaults'   => [
                     'command' => '',
                 ],
             ],
@@ -35,8 +35,8 @@ return [
         'admin' => [
             'items' => [
                 'cronfig.title' => [
-                    'id' => 'cronfig',
-                    'route' => 'cronfig',
+                    'id'        => 'cronfig',
+                    'route'     => 'cronfig',
                     'iconClass' => 'fa-clock-o',
                     // 'access'    => 'plugin:cronfig:cronfig:view',
                 ],
@@ -47,19 +47,19 @@ return [
     'services' => [
         'commands' => [
             'cronfig.command.tasks_status' => [
-                'class' => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
-                'tag' => 'console.command',
+                'class'     => \MauticPlugin\CronfigBundle\Command\TasksStatus::class,
+                'tag'       => 'console.command',
                 'arguments' => ['cronfig.task_service.manager'],
             ],
             'cronfig.command.tasks_manage' => [
-                'class' => \MauticPlugin\CronfigBundle\Command\TasksManage::class,
-                'tag' => 'console.command',
+                'class'     => \MauticPlugin\CronfigBundle\Command\TasksManage::class,
+                'tag'       => 'console.command',
                 'arguments' => ['cronfig.task_service.manager'],
             ],
         ],
         'models' => [
             'cronfig.model.cronfig' => [
-                'class' => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
+                'class'     => \MauticPlugin\CronfigBundle\Model\CronfigModel::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'mautic.configurator',
@@ -74,7 +74,7 @@ return [
         ],
         'providers' => [
             'cronfig.provider.task_status' => [
-                'class' => \MauticPlugin\CronfigBundle\Provider\TaskStatusProvider::class,
+                'class'     => \MauticPlugin\CronfigBundle\Provider\TaskStatusProvider::class,
                 'arguments' => [
                     'database_connection',
                     'mautic.helper.core_parameters',
@@ -83,13 +83,13 @@ return [
         ],
         'events' => [
             'cronfig.subscriber.campaign' => [
-                'class' => \MauticPlugin\CronfigBundle\EventListener\CampaignSubscriber::class,
+                'class'     => \MauticPlugin\CronfigBundle\EventListener\CampaignSubscriber::class,
                 'arguments' => [
                     'cronfig.task_service.manager',
                 ],
             ],
             'cronfig.subscriber.segment' => [
-                'class' => \MauticPlugin\CronfigBundle\EventListener\SegmentSubscriber::class,
+                'class'     => \MauticPlugin\CronfigBundle\EventListener\SegmentSubscriber::class,
                 'arguments' => [
                     'cronfig.task_service.manager',
                 ],
@@ -97,35 +97,35 @@ return [
         ],
         'taskServices' => [
             'cronfig.task_service.segments_update' => [
-                'class' => \MauticPlugin\CronfigBundle\TaskService\SegmentsUpdateTaskService::class,
+                'class'     => \MauticPlugin\CronfigBundle\TaskService\SegmentsUpdateTaskService::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.campaigns_update' => [
-                'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsUpdateTaskService::class,
+                'class'     => \MauticPlugin\CronfigBundle\TaskService\CampaignsUpdateTaskService::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.campaigns_trigger' => [
-                'class' => \MauticPlugin\CronfigBundle\TaskService\CampaignsTriggerTaskService::class,
+                'class'     => \MauticPlugin\CronfigBundle\TaskService\CampaignsTriggerTaskService::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.ip_lookup_download' => [
-                'class' => \MauticPlugin\CronfigBundle\TaskService\IpLookupDownloadTaskService::class,
+                'class'     => \MauticPlugin\CronfigBundle\TaskService\IpLookupDownloadTaskService::class,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'cronfig.provider.task_status',
                 ],
             ],
             'cronfig.task_service.manager' => [
-                'class' => \MauticPlugin\CronfigBundle\TaskService\TaskManager::class,
+                'class'     => \MauticPlugin\CronfigBundle\TaskService\TaskManager::class,
                 'arguments' => [
                     'cronfig.collector.mautic_task',
                     'cronfig.api.repository',
@@ -134,13 +134,13 @@ return [
         ],
         'api' => [
             'cronfig.api.config' => [
-                'class' => \MauticPlugin\CronfigBundle\Api\Config::class,
+                'class'     => \MauticPlugin\CronfigBundle\Api\Config::class,
                 'arguments' => [
                     'mautic.helper.cache_storage',
                 ],
             ],
             'cronfig.api.connection' => [
-                'class' => \MauticPlugin\CronfigBundle\Api\Connection::class,
+                'class'     => \MauticPlugin\CronfigBundle\Api\Connection::class,
                 'arguments' => [
                     'cronfig.api.config',
                     'mautic.guzzle.client',
@@ -152,7 +152,7 @@ return [
                 'class' => \MauticPlugin\CronfigBundle\Api\QueryBuilder::class,
             ],
             'cronfig.api.repository' => [
-                'class' => \MauticPlugin\CronfigBundle\Api\Repository::class,
+                'class'     => \MauticPlugin\CronfigBundle\Api\Repository::class,
                 'arguments' => [
                     'cronfig.api.connection',
                     'cronfig.api.query_builder',

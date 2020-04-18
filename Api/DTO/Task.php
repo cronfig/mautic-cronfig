@@ -9,13 +9,13 @@
 
 namespace MauticPlugin\CronfigBundle\Api\DTO;
 
-use DateTimeInterface;
 use DateTimeImmutable;
+use DateTimeInterface;
 
-class Task
+final class Task
 {
-    public const STATUS_ACTIVE = 'active';
-    public const STATUS_STOPPED = 'stopped';
+    public const STATUS_ACTIVE   = 'active';
+    public const STATUS_STOPPED  = 'stopped';
     public const STATUS_CANCELED = 'canceled';
 
     /**
@@ -82,10 +82,10 @@ class Task
 
     public function __construct(string $url, string $status, string $platform, int $period = 0, int $timeout = 0)
     {
-        $this->url = $url;
-        $this->status = $status;
-        $this->period = $period;
-        $this->timeout = $timeout;
+        $this->url      = $url;
+        $this->status   = $status;
+        $this->period   = $period;
+        $this->timeout  = $timeout;
         $this->platform = $platform;
     }
 
@@ -110,18 +110,18 @@ class Task
     public function toArray(): array
     {
         return [
-            'id' => $this->getId(),
-            'status' => $this->getStatus(),
-            'url' => $this->getUrl(),
-            'period' => $this->getPeriod(),
-            'createdAt' => $this->getCreatedAt() ? $this->getCreatedAt()->format(DateTimeInterface::ATOM) : null,
-            'updatedAt' => $this->getUpdatedAt() ? $this->getUpdatedAt()->format(DateTimeInterface::ATOM) : null,
-            'triggeredAt' => $this->getTriggeredAt() ? $this->getTriggeredAt()->format(DateTimeInterface::ATOM) : null,
-            'platform' => $this->getPlatform(),
-            'timeout' => $this->getTimeout(),
-            'totalJobCount' => $this->getTotalJobCount(),
+            'id'              => $this->getId(),
+            'status'          => $this->getStatus(),
+            'url'             => $this->getUrl(),
+            'period'          => $this->getPeriod(),
+            'createdAt'       => null !== $this->getCreatedAt() ? $this->getCreatedAt()->format(DateTimeInterface::ATOM) : null,
+            'updatedAt'       => null !== $this->getUpdatedAt() ? $this->getUpdatedAt()->format(DateTimeInterface::ATOM) : null,
+            'triggeredAt'     => null !== $this->getTriggeredAt() ? $this->getTriggeredAt()->format(DateTimeInterface::ATOM) : null,
+            'platform'        => $this->getPlatform(),
+            'timeout'         => $this->getTimeout(),
+            'totalJobCount'   => $this->getTotalJobCount(),
             'totalErrorCount' => $this->getTotalErrorCount(),
-            'errorCount' => $this->getErrorCount(),
+            'errorCount'      => $this->getErrorCount(),
         ];
     }
 

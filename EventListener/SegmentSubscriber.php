@@ -14,7 +14,7 @@ use Mautic\LeadBundle\LeadEvents;
 use MauticPlugin\CronfigBundle\TaskService\TaskManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class SegmentSubscriber implements EventSubscriberInterface
+final class SegmentSubscriber implements EventSubscriberInterface
 {
     /**
      * @var TaskManager
@@ -26,13 +26,10 @@ class SegmentSubscriber implements EventSubscriberInterface
         $this->taskManager = $taskManager;
     }
 
-    /**
-     * @return array
-     */
     public static function getSubscribedEvents(): array
     {
         return [
-            LeadEvents::LIST_POST_SAVE => 'onChange',
+            LeadEvents::LIST_POST_SAVE   => 'onChange',
             LeadEvents::LIST_POST_DELETE => 'onDelete',
         ];
     }

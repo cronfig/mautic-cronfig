@@ -9,13 +9,11 @@
 
 namespace MauticPlugin\CronfigBundle\TaskService;
 
-use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 
-class CampaignsTriggerTaskService extends AbstractTaskService
+final class CampaignsTriggerTaskService extends AbstractTaskService
 {
-    public const COMMAND = 'mautic:campaigns:trigger';
-
     /**
      * @var TaskStatusProvider
      */

@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace MauticPlugin\CronfigBundle\CompilerPass;
 
+use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 
-class TaskServicePass implements CompilerPassInterface
+final class TaskServicePass implements CompilerPassInterface
 {
     /**
      * {@inheritdoc}

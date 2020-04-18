@@ -9,14 +9,14 @@
 
 namespace MauticPlugin\CronfigBundle\Collection;
 
-use Iterator;
 use Countable;
+use Iterator;
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
 /**
  * Holds Task objects that represent tasks sent from or to the Cronfig API.
  */
-class TaskCollection implements Iterator, Countable
+final class TaskCollection implements Iterator, Countable
 {
     /**
      * @var Task[]

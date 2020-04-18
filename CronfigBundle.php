@@ -11,10 +11,10 @@
 namespace MauticPlugin\CronfigBundle;
 
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use MauticPlugin\CronfigBundle\CompilerPass\TaskServicePass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class CronfigBundle extends PluginBundleBase
+final class CronfigBundle extends PluginBundleBase
 {
     /**
      * {@inheritdoc}

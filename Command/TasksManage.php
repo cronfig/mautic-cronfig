@@ -9,16 +9,16 @@
 
 namespace MauticPlugin\CronfigBundle\Command;
 
+use MauticPlugin\CronfigBundle\TaskService\TaskManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use MauticPlugin\CronfigBundle\TaskService\TaskManager;
+use Symfony\Component\Stopwatch\Stopwatch;
 
-class TasksManage extends ContainerAwareCommand
+final class TasksManage extends ContainerAwareCommand
 {
-    public const COMMAND = 'cronfig:tasks:manage';
+    private const COMMAND = 'cronfig:tasks:manage';
 
     /**
      * @var TaskManager
@@ -46,7 +46,7 @@ class TasksManage extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+        $io        = new SymfonyStyle($input, $output);
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
 

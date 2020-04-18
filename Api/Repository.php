@@ -13,7 +13,7 @@ use MauticPlugin\CronfigBundle\Api\DTO\Task;
 use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 use MauticPlugin\CronfigBundle\Exception\ApiException;
 
-class Repository
+final class Repository
 {
     /**
      * @var Connection
@@ -27,7 +27,7 @@ class Repository
 
     public function __construct(Connection $connection, QueryBuilder $queryBuilder)
     {
-        $this->connection = $connection;
+        $this->connection   = $connection;
         $this->queryBuilder = $queryBuilder;
     }
 

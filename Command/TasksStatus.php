@@ -10,16 +10,16 @@
 namespace MauticPlugin\CronfigBundle\Command;
 
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
+use MauticPlugin\CronfigBundle\TaskService\TaskManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use MauticPlugin\CronfigBundle\TaskService\TaskManager;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Stopwatch\Stopwatch;
 
-class TasksStatus extends ContainerAwareCommand
+final class TasksStatus extends ContainerAwareCommand
 {
     /**
      * @var TaskManager
@@ -53,11 +53,11 @@ class TasksStatus extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
+        $io        = new SymfonyStyle($input, $output);
         $stopwatch = new Stopwatch();
         $stopwatch->start('command');
 
-        $command = $input->getOption('command');
+        $command         = $input->getOption('command');
         $commandToDetail = null;
 
         $table = new Table($output);
@@ -66,28 +66,24 @@ class TasksStatus extends ContainerAwareCommand
         $taskServices = $this->taskManager->setMatchingTasks();
 
         foreach ($taskServices as $taskService) {
-            $needsWorker = (int) $taskService->needsBackgroundJob();
-            $tasks = $taskService->getTasks();
-            $activeTasksCount = $tasks->filterByStatus(Task::STATUS_ACTIVE)->count();
-            $stoppedTasksCount = $tasks->filterByStatus(Task::STATUS_STOPPED)->count();
+            $needsWorker        = (int) $taskService->needsBackgroundJob();
+            $tasks              = $taskService->getTasks();
+            $activeTasksCount   = $tasks->filterByStatus(Task::STATUS_ACTIVE)->count();
+            $stoppedTasksCount  = $tasks->filterByStatus(Task::STATUS_STOPPED)->count();
             $canceledTasksCount = $tasks->filterByStatus(Task::STATUS_CANCELED)->count();
-            $commandColor = 'white';
-            $needsWorkerColor = 'white';
-            $activeTasksColor = 'white';
-            $stoppedTasksColor = 'white';
+            $commandColor       = 'white';
+            $needsWorkerColor   = 'white';
+            $activeTasksColor   = 'white';
+            $stoppedTasksColor  = 'white';
             if ($needsWorker) {
                 $needsWorkerColor = 'green';
-                if ($activeTasksCount) {
-                    $activeTasksColor = 'green';
-                } else {
-                    $activeTasksColor = 'red';
-                }
+                $activeTasksColor = 0 !== $activeTasksCount ? 'green' : 'red';
             }
             if ($taskService->getCommand() === $command) {
-                $commandColor = 'green';
+                $commandColor    = 'green';
                 $commandToDetail = $taskService;
             }
-            $canceledTasksColor = $canceledTasksCount ? 'red' : 'white';
+            $canceledTasksColor = 0 !== $canceledTasksCount ? 'red' : 'white';
             $table->addRow([
                 "<fg={$commandColor}>{$taskService->getCommand()}</>",
                 "<fg={$needsWorkerColor}>{$needsWorker}</>",
@@ -100,7 +96,7 @@ class TasksStatus extends ContainerAwareCommand
         $table->render();
 
         if ($command) {
-            if ($commandToDetail) {
+            if (null !== $commandToDetail) {
                 $io->section("Cronfig tasks for command $command");
                 $io->write(json_encode($commandToDetail->getTasks()->toArray(), JSON_PRETTY_PRINT));
             } else {

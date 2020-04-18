@@ -11,7 +11,7 @@ namespace MauticPlugin\CronfigBundle\Api;
 
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
 
-class QueryBuilder
+final class QueryBuilder
 {
     public function buildJwtTokenQuery(string $apiKey): string
     {

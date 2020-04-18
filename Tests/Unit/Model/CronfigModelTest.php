@@ -41,8 +41,8 @@ class CronfigModelTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
-        $this->configurator = $this->createMock(Configurator::class);
-        $this->cacheHelper = $this->createMock(CacheHelper::class);
+        $this->configurator         = $this->createMock(Configurator::class);
+        $this->cacheHelper          = $this->createMock(CacheHelper::class);
 
         $this->cronfigModel = new CronfigModel(
             $this->coreParametersHelper,

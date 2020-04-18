@@ -10,12 +10,12 @@
 namespace MauticPlugin\CronfigBundle\TaskService;
 
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
+use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 
 abstract class AbstractTaskService implements TaskServiceInterface
 {
-    public const COMMAND = 'undefined';
+    private const COMMAND = 'undefined';
 
     /**
      * @var CoreParametersHelper
@@ -32,7 +32,7 @@ abstract class AbstractTaskService implements TaskServiceInterface
     public function __construct(CoreParametersHelper $coreParametersHelper)
     {
         $this->coreParametersHelper = $coreParametersHelper;
-        $this->tasks = new TaskCollection();
+        $this->tasks                = new TaskCollection();
     }
 
     public function getCommand(): string
@@ -82,7 +82,7 @@ abstract class AbstractTaskService implements TaskServiceInterface
 
         if (0 === $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE)->count()) {
             $commandEncoded = urlencode($this->getCommand());
-            $taskUrl = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
+            $taskUrl        = "{$this->getMauticUrl()}/cronfig/{$commandEncoded}?secret_key="; // @todo add the secret key.
 
             $tasksToCreate->add(new Task($taskUrl, Task::STATUS_ACTIVE, 'Mautic'));
         }
@@ -92,9 +92,9 @@ abstract class AbstractTaskService implements TaskServiceInterface
 
     public function getTasksToUpdate(): TaskCollection
     {
-        $activeTasks = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
+        $activeTasks  = $this->getTasks()->filterByStatus(Task::STATUS_ACTIVE);
         $stoppedTasks = $this->getTasks()->filterByStatus(Task::STATUS_STOPPED);
-        $needsTask = $this->needsBackgroundJob();
+        $needsTask    = $this->needsBackgroundJob();
 
         if ($needsTask && 0 === $activeTasks->count() && $stoppedTasks->count() > 0) {
             $stoppedTasks->rewind();

@@ -10,10 +10,10 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Unit\EventListener;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use MauticPlugin\CronfigBundle\TaskService\TaskManager;
-use MauticPlugin\CronfigBundle\EventListener\SegmentSubscriber;
 use Mautic\LeadBundle\Event\LeadListEvent;
+use MauticPlugin\CronfigBundle\EventListener\SegmentSubscriber;
+use MauticPlugin\CronfigBundle\TaskService\TaskManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class SegmentSubscriberTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ class SegmentSubscriberTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->taskManager = $this->createMock(TaskManager::class);
+        $this->taskManager       = $this->createMock(TaskManager::class);
         $this->segmentSubscriber = new SegmentSubscriber(
             $this->taskManager
         );

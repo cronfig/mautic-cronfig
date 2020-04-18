@@ -11,10 +11,10 @@ namespace MauticPlugin\CronfigBundle\EventListener;
 
 use Mautic\CampaignBundle\CampaignEvents;
 use Mautic\CampaignBundle\Event\CampaignEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use MauticPlugin\CronfigBundle\TaskService\TaskManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CampaignSubscriber implements EventSubscriberInterface
+final class CampaignSubscriber implements EventSubscriberInterface
 {
     /**
      * @var TaskManager
@@ -32,7 +32,7 @@ class CampaignSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            CampaignEvents::CAMPAIGN_POST_SAVE => 'onChange',
+            CampaignEvents::CAMPAIGN_POST_SAVE   => 'onChange',
             CampaignEvents::CAMPAIGN_POST_DELETE => 'onDelete',
         ];
     }

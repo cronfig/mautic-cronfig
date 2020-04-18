@@ -11,7 +11,7 @@
 
 namespace MauticPlugin\CronfigBundle\Exception;
 
-class MissingJwtException extends ApiException
+final class MissingJwtException extends ApiException
 {
     public function __construct(string $message = 'JWT is missing. Reauthenticate.')
     {

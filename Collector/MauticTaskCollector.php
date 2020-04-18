@@ -9,13 +9,13 @@
 
 namespace MauticPlugin\CronfigBundle\Collector;
 
-use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 use MauticPlugin\CronfigBundle\Collection\TaskServiceCollection;
+use MauticPlugin\CronfigBundle\TaskService\TaskServiceInterface;
 
 /**
  * Collects Mautic task services.
  */
-class MauticTaskCollector
+final class MauticTaskCollector
 {
     /**
      * @var TaskServiceCollection

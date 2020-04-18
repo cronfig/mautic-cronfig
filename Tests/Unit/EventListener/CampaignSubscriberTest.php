@@ -10,10 +10,10 @@
 
 namespace MauticPlugin\CronfigBundle\Tests\Unit\EventListener;
 
-use PHPUnit\Framework\MockObject\MockObject;
-use MauticPlugin\CronfigBundle\TaskService\TaskManager;
-use MauticPlugin\CronfigBundle\EventListener\CampaignSubscriber;
 use Mautic\CampaignBundle\Event\CampaignEvent;
+use MauticPlugin\CronfigBundle\EventListener\CampaignSubscriber;
+use MauticPlugin\CronfigBundle\TaskService\TaskManager;
+use PHPUnit\Framework\MockObject\MockObject;
 
 class CampaignSubscriberTest extends \PHPUnit\Framework\TestCase
 {
@@ -29,7 +29,7 @@ class CampaignSubscriberTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->taskManager = $this->createMock(TaskManager::class);
+        $this->taskManager        = $this->createMock(TaskManager::class);
         $this->campaignSubscriber = new CampaignSubscriber(
             $this->taskManager
         );

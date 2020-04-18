@@ -9,15 +9,13 @@
 
 namespace MauticPlugin\CronfigBundle\TaskService;
 
-use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use MauticPlugin\CronfigBundle\Collection\TaskCollection;
 use MauticPlugin\CronfigBundle\Api\DTO\Task;
+use MauticPlugin\CronfigBundle\Collection\TaskCollection;
+use MauticPlugin\CronfigBundle\Provider\TaskStatusProvider;
 
-class IpLookupDownloadTaskService extends AbstractTaskService
+final class IpLookupDownloadTaskService extends AbstractTaskService
 {
-    public const COMMAND = 'mautic:iplookup:download';
-
     /**
      * @var TaskStatusProvider
      */
@@ -37,7 +35,7 @@ class IpLookupDownloadTaskService extends AbstractTaskService
     public function getTasksToCreate(): TaskCollection
     {
         return parent::getTasksToCreate()->map(function (Task $task) {
-            $thirtyDaysInMinutes = 30*24*60;
+            $thirtyDaysInMinutes = 30 * 24 * 60;
             $task->setPeriod($thirtyDaysInMinutes);
 
             return $task;
