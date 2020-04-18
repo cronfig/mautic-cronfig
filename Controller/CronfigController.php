@@ -10,17 +10,16 @@
 namespace MauticPlugin\CronfigBundle\Controller;
 
 use Mautic\CoreBundle\Controller\CommonController;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
 
-/**
- * Class CronfigController.
- */
-class CronfigController extends CommonController
+final class CronfigController extends CommonController
 {
     /*
      * Display the Cronfig Login/Dashboard
      */
     public function indexAction()
     {
+        /** @var CronfigModel $model */
         $model     = $this->getModel('cronfig');
         $baseUrl   = $this->generateUrl('mautic_base_index', [], true);
         $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');

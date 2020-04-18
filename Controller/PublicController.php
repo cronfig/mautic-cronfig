@@ -9,7 +9,6 @@
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
-use FOS\RestBundle\Util\Codes;
 use Mautic\CoreBundle\Controller\CommonController;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -19,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * Class PublicController.
  */
-class PublicController extends CommonController
+final class PublicController extends CommonController
 {
     /*
      * @param string $command
@@ -32,11 +31,11 @@ class PublicController extends CommonController
         $logger    = $this->get('monolog.logger.mautic');
 
         if (empty($config['secret_key'])) {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key is missing in the configuration';
             $logger->log('error', 'Cronfig: secret key is missing in the configuration');
         } elseif (!$secretKey) {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key is missing in the request';
             $logger->log('error', 'Cronfig: secret key is missing in the request');
         } elseif ($config['secret_key'] === $secretKey) {
@@ -66,12 +65,12 @@ class PublicController extends CommonController
             $errorWords = ['--force', 'exception'];
 
             foreach ($errorWords as $errorWord) {
-                if (strpos($output, $errorWord) !== false) {
+                if (false !== strpos($output, $errorWord)) {
                     $response->setStatusCode(500);
                 }
             }
         } else {
-            $response->setStatusCode(Codes::HTTP_FORBIDDEN);
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
             $output = 'error: secret key mismatch';
             $logger->log('error', 'Cronfig: secret key mismatch: '.$config['secret_key'].' != '.$secretKey);
         }

@@ -15,10 +15,7 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
 
-/**
- * Class CronfigModel.
- */
-class CronfigModel extends AbstractCommonModel
+final class CronfigModel extends AbstractCommonModel
 {
     /**
      * Cronfig config params from local.php.
@@ -37,14 +34,11 @@ class CronfigModel extends AbstractCommonModel
      */
     protected $cache;
 
-    /**
-     * @var Constructor
-     */
     public function __construct(
         CoreParametersHelper $coreParametersHelper,
         Configurator $configurator,
-        CacheHelper $cacheHelper)
-    {
+        CacheHelper $cacheHelper
+    ) {
         $this->config       = $coreParametersHelper->getParameter('cronfig');
         $this->configurator = $configurator;
         $this->cache        = $cacheHelper;
@@ -132,11 +126,11 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
     public function saveApiKey($apiKey)
     {
-        if (!$apiKey) {
+        if ('' === $apiKey) {
             throw new \Exception('cronfig.api.key.empty');
         }
 
