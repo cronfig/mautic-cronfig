@@ -102,6 +102,26 @@ class CronfigModel extends AbstractCommonModel
                 'title'       => 'Process background imports',
                 'description' => 'This task is needed for running imports on background so you don\'t have to wait with open browser.',
             ],
+            'mautic:integration:fetchleads --integration=Hubspot' => [
+                'title'       => 'Fetch contacts from Hubspot',
+                'description' => 'Turn this on to fetch contacts from Hubspot. Use the campaign action to push contacts to Hubspot.',
+            ],
+            'mautic:integration:fetchleads --integration=Salesforce' => [
+                'title'       => 'Fetch contacts from Salesforce',
+                'description' => 'Turn this on to fetch contacts from Salesforce. Use the campaign action to push contacts to Salesforce.',
+            ],
+            'mautic:integration:fetchleads --integration=Vtiger' => [
+                'title'       => 'Fetch contacts from vTiger',
+                'description' => 'Turn this on to fetch contacts from vTiger. Use the campaign action to push contacts to vTiger.',
+            ],
+            'mautic:integration:fetchleads --integration=Sugarcrm' => [
+                'title'       => 'Fetch contacts from Sugar CRM',
+                'description' => 'Turn this on to fetch contacts from Sugar CRM. Use the campaign action to push contacts to Sugar CRM.',
+            ],
+            'mautic:integration:fetchleads --integration=Zoho' => [
+                'title'       => 'Fetch contacts from Zoho CRM',
+                'description' => 'Turn this on to fetch contacts from Zoho CRM. Use the campaign action to push contacts to Zoho CRM.',
+            ],
         ];
     }
 
