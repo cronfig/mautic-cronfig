@@ -15,9 +15,6 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
 
-/**
- * Class CronfigModel.
- */
 class CronfigModel extends AbstractCommonModel
 {
     /**
@@ -103,24 +100,24 @@ class CronfigModel extends AbstractCommonModel
                 'description' => 'This task is needed for running imports on background so you don\'t have to wait with open browser.',
             ],
             'mautic:integration:fetchleads --integration=Hubspot' => [
-                'title'       => 'Fetch contacts from Hubspot',
-                'description' => 'Turn this on to fetch contacts from Hubspot. Use the campaign action to push contacts to Hubspot.',
+                'title'       => 'Fetch contacts from Hubspot every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Hubspot. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Hubspot.',
             ],
             'mautic:integration:fetchleads --integration=Salesforce' => [
-                'title'       => 'Fetch contacts from Salesforce',
-                'description' => 'Turn this on to fetch contacts from Salesforce. Use the campaign action to push contacts to Salesforce.',
+                'title'       => 'Fetch contacts from Salesforce every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Salesforce. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Salesforce.',
             ],
             'mautic:integration:fetchleads --integration=Vtiger' => [
-                'title'       => 'Fetch contacts from vTiger',
-                'description' => 'Turn this on to fetch contacts from vTiger. Use the campaign action to push contacts to vTiger.',
+                'title'       => 'Fetch contacts from vTiger every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from vTiger. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to vTiger.',
             ],
             'mautic:integration:fetchleads --integration=Sugarcrm' => [
-                'title'       => 'Fetch contacts from Sugar CRM',
-                'description' => 'Turn this on to fetch contacts from Sugar CRM. Use the campaign action to push contacts to Sugar CRM.',
+                'title'       => 'Fetch contacts from Sugar CRM every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Sugar CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Sugar CRM.',
             ],
             'mautic:integration:fetchleads --integration=Zoho' => [
-                'title'       => 'Fetch contacts from Zoho CRM',
-                'description' => 'Turn this on to fetch contacts from Zoho CRM. Use the campaign action to push contacts to Zoho CRM.',
+                'title'       => 'Fetch contacts from Zoho CRM every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Zoho CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Zoho CRM.',
             ],
         ];
     }
