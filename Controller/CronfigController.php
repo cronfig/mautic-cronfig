@@ -11,9 +11,6 @@ namespace MauticPlugin\CronfigBundle\Controller;
 
 use Mautic\CoreBundle\Controller\CommonController;
 
-/**
- * Class CronfigController.
- */
 class CronfigController extends CommonController
 {
     /*
