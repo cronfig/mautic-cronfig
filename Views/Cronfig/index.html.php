@@ -29,9 +29,9 @@ echo $view['assets']->includeStylesheet('plugins/CronfigBundle/Assets/css/cronfi
 <script type="text/javascript">
     document.cronfigConfig = {
         platform: 'mautic',
-        tasks: <?php echo json_encode($commands) ?>,
-        email: '<?php echo $email ?>',
-        apiKey: '<?php echo $apiKey ?>',
+        tasks: <?php echo json_encode($commands); ?>,
+        email: '<?php echo $email; ?>',
+        apiKey: '<?php echo $apiKey; ?>',
         rememberApiKey: function(apiKey) {
             Mautic.ajaxActionRequest('plugin:cronfig:saveApiKey', 'apiKey=' + apiKey, function(response) {
                 if (typeof response.secret_key !== 'undefined') {

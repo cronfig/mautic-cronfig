@@ -15,9 +15,6 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
 
-/**
- * Class CronfigModel.
- */
 class CronfigModel extends AbstractCommonModel
 {
     /**
@@ -25,17 +22,17 @@ class CronfigModel extends AbstractCommonModel
      *
      * @var array
      */
-    protected $config;
+    private $config;
 
     /**
      * @var Configurator
      */
-    protected $configurator;
+    private $configurator;
 
     /**
      * @var CacheHelper
      */
-    protected $cache;
+    private $cache;
 
     /**
      * @var Constructor
@@ -102,6 +99,42 @@ class CronfigModel extends AbstractCommonModel
                 'title'       => 'Process background imports',
                 'description' => 'This task is needed for running imports on background so you don\'t have to wait with open browser.',
             ],
+            'mautic:integration:fetchleads --integration=Hubspot' => [
+                'title'       => 'Fetch contacts from Hubspot every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Hubspot. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Hubspot.',
+            ],
+            'mautic:integration:fetchleads --integration=Salesforce' => [
+                'title'       => 'Fetch contacts from Salesforce every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Salesforce. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Salesforce.',
+            ],
+            'mautic:integration:fetchleads --integration=Vtiger' => [
+                'title'       => 'Fetch contacts from vTiger every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from vTiger. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to vTiger.',
+            ],
+            'mautic:integration:fetchleads --integration=Sugarcrm' => [
+                'title'       => 'Fetch contacts from Sugar CRM every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Sugar CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Sugar CRM.',
+            ],
+            'mautic:integration:fetchleads --integration=Zoho' => [
+                'title'       => 'Fetch contacts from Zoho CRM every 15 minutes',
+                'description' => 'Turn this on to fetch contacts from Zoho CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Zoho CRM.',
+            ],
+            'mautic:maintenance:cleanup --no-interaction --gdpr' => [
+                'title'       => 'GDPR complience cleanup',
+                'description' => 'Delete data to fulfill GDPR European regulation. This will delete leads that have been inactive for 3 years. WARNING: The deleted data cannot be recovered and it will change Mautic statistics.',
+            ],
+            'mautic:maintenance:cleanup --no-interaction' => [
+                'title'       => 'Maintenance: 1 year cleanup',
+                'description' => 'Deletes data for contacts that were not active for 1 year. Currently supported are audit log entries, visitors (anonymous contacts), and visitor page hits. WARNING: The deleted data cannot be recovered and it will change Mautic statistics.',
+            ],
+            'mautic:contacts:deduplicate' => [
+                'title'       => 'Maintenance: Deduplicate contacts',
+                'description' => 'It may happen that some duplicate contacts will get into the system somehow. This task will find contacts with the same unique identifiers and merge them.',
+            ],
+            'mautic:unusedip:delete' => [
+                'title'       => 'Maintenance: Deduplicate contacts',
+                'description' => 'Deletes IP addresses that are not used in any other database table. Those IP adresses usually belonged to contacts that were deleted already.',
+            ],
         ];
     }
 
@@ -166,8 +199,10 @@ class CronfigModel extends AbstractCommonModel
             );
             $this->configurator->write();
 
-            // We must clear the application cache for the updated values to take effect
-            $this->cache->clearContainerFile();
+            // We must clear the application cache for M2 for the updated values to take effect. M3 doesn't need it.
+            if (method_exists($this->cache, 'clearContainerFile')) {
+                $this->cache->clearContainerFile();
+            }
         }
 
         return $secretKey;
