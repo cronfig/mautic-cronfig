@@ -19,9 +19,9 @@ before_script:
   - composer install
   - mv $TRAVIS_BUILD_DIR plugins
   - mv plugins/mautic-cronfig plugins/CronfigBundle
-  - ls plugins/CronfigBundle
 
 script:
   - bin/phpunit --bootstrap vendor/autoload.php --configuration app/phpunit.xml.dist --filter CronfigBundle
+  - bin/phpstan analyse plugins/CronfigBundle -c plugins/CronfigBundle/phpstan.neon
   - bin/php-cs-fixer fix plugins/CronfigBundle -v --dry-run --diff
 
