@@ -14,6 +14,7 @@ use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
+use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 
 class CronfigModel extends AbstractCommonModel
 {
@@ -141,13 +142,20 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array
      */
-    public function getCommandsWithUrls($baseUrl, $secretKey)
+    public function getCommandsWithUrls()
     {
-        $secretKeyParam = '?secret_key='.$secretKey;
+        $baseUrl   = rtrim($this->coreParametersHelper->getParameter('site_url'), '/');
+        $config    = $this->coreParametersHelper->getParameter('cronfig');
+        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+
+        if (empty($baseUrl)) {
+            throw new PluginNotConfiguredException("Site URL is not configured. Please go to Mautic configuration and fill it in.");
+        }
 
         return array_map(
-            function ($command, $commandConfig) use ($baseUrl, $secretKeyParam) {
-                $commandConfig['url'] = $baseUrl.'cronfig/'.urlencode($command).$secretKeyParam;
+            function ($command, $commandConfig) use ($baseUrl, $secretKey) {
+                $encodedCommand = urlencode($command);
+                $commandConfig['url'] = "{$baseUrl}/cronfig/{$encodedCommand}?secret_key={$secretKey}";
 
                 return $commandConfig;
             },
