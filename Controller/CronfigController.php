@@ -9,7 +9,11 @@
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
+use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Controller\CommonController;
+use Mautic\CoreBundle\Helper\CoreParametersHelper;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
+use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 
 class CronfigController extends CommonController
 {
@@ -18,17 +22,31 @@ class CronfigController extends CommonController
      */
     public function indexAction()
     {
-        $model     = $this->getModel('cronfig');
-        $baseUrl   = $this->generateUrl('mautic_base_index', [], true);
-        $config    = $this->get('mautic.helper.core_parameters')->getParameter('cronfig');
-        $email     = $this->get('mautic.helper.user')->getUser()->getEmail();
-        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
-        $apiKey    = empty($config['api_key']) ? '' : $config['api_key'];
-        $commands  = $model->getCommandsWithUrls($baseUrl, $secretKey);
+        /** @var CronfigModel $model */
+        $model = $this->getModel('cronfig');
+
+        /** @var CoreParametersHelper $coreParametersHelper */
+        $coreParametersHelper = $this->get('mautic.helper.core_parameters');
+
+        /** @var UserHelper $userHelper */
+        $userHelper = $this->get('mautic.helper.user');
+        
+        $config   = $coreParametersHelper->getParameter('cronfig');
+        $email    = $userHelper->getUser()->getEmail();
+        $apiKey   = empty($config['api_key']) ? '' : $config['api_key'];
+        $error    = null;
+        $commands = [];
+
+        try {
+            $commands = $model->getCommandsWithUrls();
+        } catch (PluginNotConfiguredException $e) {
+            $error = $e->getMessage();
+        }
 
         return $this->delegateView([
             'viewParameters' => [
                 'title'    => 'cronfig.title',
+                'error'    => $error,
                 'commands' => $commands,
                 'email'    => $email,
                 'apiKey'   => $apiKey,

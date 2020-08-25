@@ -14,15 +14,14 @@ use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
 use Mautic\CoreBundle\Model\AbstractCommonModel;
+use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 
 class CronfigModel extends AbstractCommonModel
 {
     /**
-     * Cronfig config params from local.php.
-     *
-     * @var array
+     * @var CoreParametersHelper
      */
-    private $config;
+    protected $coreParametersHelper;
 
     /**
      * @var Configurator
@@ -42,9 +41,9 @@ class CronfigModel extends AbstractCommonModel
         Configurator $configurator,
         CacheHelper $cacheHelper)
     {
-        $this->config       = $coreParametersHelper->getParameter('cronfig');
-        $this->configurator = $configurator;
-        $this->cache        = $cacheHelper;
+        $this->coreParametersHelper = $coreParametersHelper;
+        $this->configurator         = $configurator;
+        $this->cache                = $cacheHelper;
     }
 
     /**
@@ -143,13 +142,20 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array
      */
-    public function getCommandsWithUrls($baseUrl, $secretKey)
+    public function getCommandsWithUrls()
     {
-        $secretKeyParam = '?secret_key='.$secretKey;
+        $baseUrl   = rtrim($this->coreParametersHelper->getParameter('site_url'), '/');
+        $config    = $this->coreParametersHelper->getParameter('cronfig');
+        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+
+        if (empty($baseUrl)) {
+            throw new PluginNotConfiguredException("Site URL is not configured. Please go to Mautic configuration and fill it in.");
+        }
 
         return array_map(
-            function ($command, $commandConfig) use ($baseUrl, $secretKeyParam) {
-                $commandConfig['url'] = $baseUrl.'cronfig/'.urlencode($command).$secretKeyParam;
+            function ($command, $commandConfig) use ($baseUrl, $secretKey) {
+                $encodedCommand = urlencode($command);
+                $commandConfig['url'] = "{$baseUrl}/cronfig/{$encodedCommand}?secret_key={$secretKey}";
 
                 return $commandConfig;
             },
@@ -162,12 +168,13 @@ class CronfigModel extends AbstractCommonModel
      * Save API key to the local.php config file if it's new. Returns the secret key.
      *
      * @param string $apiKey
+     * @param string $namespace
      *
      * @return string
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function saveApiKey($apiKey)
+    public function saveApiKey($apiKey, $namespace = 'cronfig')
     {
         if (!$apiKey) {
             throw new \Exception('cronfig.api.key.empty');
@@ -177,26 +184,38 @@ class CronfigModel extends AbstractCommonModel
             throw new \Exception('mautic.config.notwritable');
         }
 
+        $config = $this->coreParametersHelper->getParameter($namespace);
+
         // Ensure the config has a secret key
-        if (empty($this->config['secret_key'])) {
+        if (empty($config['secret_key'])) {
             $secretKey = EncryptionHelper::generateKey();
         } else {
-            $secretKey = $this->config['secret_key'];
+            $secretKey = $config['secret_key'];
         }
 
         // Save the API key and secret key only if it doesn't exist or has changed
-        if (empty($this->config['api_key'])
-            || empty($this->config['secret_key'])
-            || $this->config['api_key'] !== $apiKey
-            || $this->config['secret_key'] !== $secretKey) {
-            $this->configurator->mergeParameters(
-                [
-                    'cronfig' => [
-                        'api_key'    => $apiKey,
-                        'secret_key' => $secretKey,
-                    ],
-                ]
-            );
+        if (empty($config['api_key'])
+            || empty($config['secret_key'])
+            || $config['api_key'] !== $apiKey
+            || $config['secret_key'] !== $secretKey) {
+            
+
+            if ('_cleanup_' === $apiKey) {
+                $this->configurator->mergeParameters(
+                    [
+                        $namespace => null,
+                    ]
+                );
+            } else {
+                $this->configurator->mergeParameters(
+                    [
+                        $namespace => [
+                            'api_key'    => $apiKey,
+                            'secret_key' => $secretKey,
+                        ],
+                    ]
+                );
+            }
             $this->configurator->write();
 
             // We must clear the application cache for M2 for the updated values to take effect. M3 doesn't need it.
