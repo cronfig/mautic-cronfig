@@ -15,7 +15,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
     public function testTriggerAction(): void
     {
         /** @var CoreParametersHelper $coreParametersHelper */
-        $coreParametersHelper = $this->getContainer()->get('mautic.helper.core_parameters');
+        $coreParametersHelper = self::$container->get('mautic.helper.core_parameters');
 
         $namespace = 'cronfig_test';
 
@@ -27,7 +27,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper($this->container);
+        $coreParametersHelper = new CoreParametersHelper(self::$container);
         $configParams = $coreParametersHelper->get($namespace);
 
         Assert::assertCount(2, $configParams);
@@ -54,7 +54,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper($this->container);
+        $coreParametersHelper = new CoreParametersHelper(self::$container);
 
         Assert::assertNull($coreParametersHelper->get($namespace));
     }
@@ -76,7 +76,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
     public function testTriggerActionWithMissingSecretInConfig(): void
     {
         /** @var CoreParametersHelper $coreParametersHelper */
-        $coreParametersHelper = $this->getContainer()->get('mautic.helper.core_parameters');
+        $coreParametersHelper = self::$container->get('mautic.helper.core_parameters');
 
         $namespace = 'cronfig_test';
 
@@ -88,7 +88,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper($this->container);
+        $coreParametersHelper = new CoreParametersHelper(self::$container);
 
         Assert::assertNull($coreParametersHelper->get($namespace));
 
