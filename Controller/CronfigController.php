@@ -1,24 +1,21 @@
 <?php
-/*
- * @package     Cronfig Mautic Bundle
- * @copyright   2016 Cronfig.io. All rights reserved
- * @author      Jan Linhart
- * @link        http://cronfig.io
- * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- */
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
-use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\CoreBundle\Controller\CommonController;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use MauticPlugin\CronfigBundle\Model\CronfigModel;
+use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
+use MauticPlugin\CronfigBundle\Model\CronfigModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class CronfigController extends CommonController
 {
-    /*
+    /**
      * Display the Cronfig Login/Dashboard
+     * 
+     * @return JsonResponse|Response
      */
     public function indexAction()
     {

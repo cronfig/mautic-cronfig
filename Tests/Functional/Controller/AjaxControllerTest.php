@@ -27,7 +27,7 @@ final class AjaxControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper($this->container);
+        $coreParametersHelper = new CoreParametersHelper(self::$container);
 
         Assert::assertCount(2, $coreParametersHelper->get($namespace));
         Assert::assertSame('12345abc', $coreParametersHelper->get($namespace)['api_key']);
@@ -40,7 +40,7 @@ final class AjaxControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper($this->container);
+        $coreParametersHelper = new CoreParametersHelper(self::$container);
 
         Assert::assertNull($coreParametersHelper->get($namespace));
     }

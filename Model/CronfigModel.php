@@ -1,11 +1,4 @@
 <?php
-/*
- * @package     Cronfig Mautic Bundle
- * @copyright   2016 Cronfig.io. All rights reserved
- * @author      Jan Linhart
- * @link        http://cronfig.io
- * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- */
 
 namespace MauticPlugin\CronfigBundle\Model;
 
@@ -33,9 +26,6 @@ class CronfigModel extends AbstractCommonModel
      */
     private $cache;
 
-    /**
-     * @var Constructor
-     */
     public function __construct(
         CoreParametersHelper $coreParametersHelper,
         Configurator $configurator,
@@ -49,7 +39,7 @@ class CronfigModel extends AbstractCommonModel
     /**
      * Return the array of predefined commands.
      *
-     * @return array
+     * @return array<array<string,string>>
      */
     public function getCommands()
     {
@@ -140,7 +130,7 @@ class CronfigModel extends AbstractCommonModel
     /**
      * Return the array of available commands.
      *
-     * @return array
+     * @return array<array<string,string>>
      */
     public function getCommandsWithUrls()
     {

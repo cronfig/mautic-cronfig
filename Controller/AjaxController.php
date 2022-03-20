@@ -1,25 +1,16 @@
 <?php
-/*
- * @package     Cronfig Mautic Bundle
- * @copyright   2016 Cronfig.io. All rights reserved
- * @author      Jan Linhart
- * @link        http://cronfig.io
- * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- */
 
 namespace MauticPlugin\CronfigBundle\Controller;
 
 use Mautic\CoreBundle\Controller\AjaxController as CommonAjaxController;
 use Mautic\CoreBundle\Helper\InputHelper;
-use Symfony\Component\HttpFoundation\Request;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxController extends CommonAjaxController
 {
-    /**
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    protected function saveApiKeyAction(Request $request)
+    protected function saveApiKeyAction(Request $request): JsonResponse
     {
         /** @var CronfigModel $model */
         $model     = $this->getModel('cronfig');
