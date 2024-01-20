@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Mautic\CoreBundle\Controller\CommonController;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArgvInput;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PublicController extends CommonController
 {
-    /**
-     * @param string $command
-     */
-    public function triggerAction($command): Response
+    public function triggerAction(string $command, Request $request, KernelInterface $kernel, ContainerInterface $container, LoggerInterface $logger): Response
     {
         $response  = new Response();
-        $secretKey = $this->request->query->get('secret_key');
-        $namespace = $this->request->query->get('namespace', 'cronfig');
-        $config    = (new CoreParametersHelper($this->container))->getParameter($namespace);
-        $logger    = $this->get('monolog.logger.mautic');
+        $secretKey = $request->query->get('secret_key');
+        $namespace = $request->query->get('namespace', 'cronfig');
+        $config    = (new CoreParametersHelper($container))->get($namespace);
 
         $response->headers->set('Content-Type', 'text/plain');
 
@@ -51,7 +53,7 @@ class PublicController extends CommonController
         }
 
         $command    = explode(' ', urldecode($command));
-        $errorCount = $this->request->get('error_count', 0);
+        $errorCount = $request->get('error_count', 0);
         $args       = array_merge(['console'], $command);
 
         if ($errorCount > 2) {
@@ -62,7 +64,7 @@ class PublicController extends CommonController
         try {
             $input  = new ArgvInput($args);
             $output = new BufferedOutput();
-            $app    = new Application($this->get('kernel'));
+            $app    = new Application($kernel);
             $app->setAutoExit(false);
             $app->run($input, $output);
 
@@ -77,7 +79,7 @@ class PublicController extends CommonController
         $errorWords = ['--force', 'exception'];
 
         foreach ($errorWords as $errorWord) {
-            if (false !== strpos($output, $errorWord)) {
+            if (str_contains($output, $errorWord)) {
                 $response->setStatusCode(500);
             }
         }

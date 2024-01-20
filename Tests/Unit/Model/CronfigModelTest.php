@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Tests\Unit\Model;
 
 use Mautic\CoreBundle\Configurator\Configurator;
@@ -9,27 +11,24 @@ use MauticPlugin\CronfigBundle\Model\CronfigModel;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CronfigModelTest extends TestCase
+final class CronfigModelTest extends TestCase
 {
     /**
      * @var CoreParametersHelper&MockObject
      */
-    private $coreParametersHelper;
+    private MockObject $coreParametersHelper;
 
     /**
      * @var Configurator&MockObject
      */
-    private $configurator;
+    private MockObject $configurator;
 
     /**
      * @var CacheHelper&MockObject
      */
-    private $cacheHelper;
+    private MockObject $cacheHelper;
 
-    /**
-     * @var CronfigModel
-     */
-    private $cronfigModel;
+    private CronfigModel $cronfigModel;
 
     protected function setUp(): void
     {
@@ -46,7 +45,7 @@ class CronfigModelTest extends TestCase
     public function testSaveApiKeyEmpty(): void
     {
         $this->expectException(\Exception::class);
-        $this->cronfigModel->saveApiKey(null); /** @phpstan-ignore-line as this is testing a bad input on purpose */
+        $this->cronfigModel->saveApiKey('');
     }
 
     public function testGetCommandsArrayFormat(): void
@@ -61,7 +60,7 @@ class CronfigModelTest extends TestCase
 
     public function testGetCommandsWithUrls(): void
     {
-        $this->coreParametersHelper->method('getParameter')
+        $this->coreParametersHelper->method('get')
             ->withConsecutive(
                 ['site_url'],
                 ['cronfig']
