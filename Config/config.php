@@ -3,20 +3,20 @@
 return [
     'name'        => 'Cronfig',
     'description' => 'Takes care of the cron jobs - makes your Mautic alive.',
-    'version'     => '1.0',
+    'version'     => '2.0',
     'author'      => 'Cronfig.io',
 
     'routes' => [
         'main' => [
             'cronfig' => [
                 'path'       => '/cronfig',
-                'controller' => 'CronfigBundle:Cronfig:index',
+                'controller' => 'MauticPlugin\CronfigBundle\Controller\CronfigController::indexAction',
             ],
         ],
         'public' => [
             'cronfig_public' => [
                 'path'       => '/cronfig/{command}',
-                'controller' => 'CronfigBundle:Public:trigger',
+                'controller' => 'MauticPlugin\CronfigBundle\Controller\PublicController::triggerAction',
                 'defaults'   => [
                     'command' => '',
                 ],
@@ -32,19 +32,6 @@ return [
                     'route'     => 'cronfig',
                     'iconClass' => 'fa-clock-o',
                     // 'access'    => 'plugin:cronfig:cronfig:view',
-                ],
-            ],
-        ],
-    ],
-
-    'services' => [
-        'models' => [
-            'mautic.cronfig.model.cronfig' => [
-                'class'     => MauticPlugin\CronfigBundle\Model\CronfigModel::class,
-                'arguments' => [
-                    'mautic.helper.core_parameters',
-                    'mautic.configurator',
-                    'mautic.helper.cache',
                 ],
             ],
         ],

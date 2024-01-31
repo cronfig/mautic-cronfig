@@ -13,8 +13,8 @@ final class AjaxControllerTest extends MauticMysqlTestCase
 {
     public function testCreatingApiKeyAndSecret(): void
     {
-        /** @var CoreParametersHelper $coreParametersHelper */
         $coreParametersHelper = $this->getContainer()->get('mautic.helper.core_parameters');
+        \assert($coreParametersHelper instanceof CoreParametersHelper);
 
         $namespace = 'cronfig_test';
 
@@ -26,8 +26,10 @@ final class AjaxControllerTest extends MauticMysqlTestCase
             ['apiKey' => '12345abc', 'namespace' => $namespace]
         );
 
+        Assert::assertTrue($this->client->getResponse()->isSuccessful(), $this->client->getResponse()->getContent());
+
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper(self::$container);
+        $coreParametersHelper = new CoreParametersHelper($this->getContainer());
 
         Assert::assertCount(2, $coreParametersHelper->get($namespace));
         Assert::assertSame('12345abc', $coreParametersHelper->get($namespace)['api_key']);
@@ -40,7 +42,7 @@ final class AjaxControllerTest extends MauticMysqlTestCase
         );
 
         // Create the param helper again so it would have the latest changes.
-        $coreParametersHelper = new CoreParametersHelper(self::$container);
+        $coreParametersHelper = new CoreParametersHelper($this->getContainer());
 
         Assert::assertNull($coreParametersHelper->get($namespace));
     }

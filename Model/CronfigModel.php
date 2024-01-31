@@ -1,39 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Model;
 
 use Mautic\CoreBundle\Configurator\Configurator;
-use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
-use Mautic\CoreBundle\Model\AbstractCommonModel;
 use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 
-class CronfigModel extends AbstractCommonModel
+final class CronfigModel
 {
-    /**
-     * @var CoreParametersHelper
-     */
-    protected $coreParametersHelper;
-
-    /**
-     * @var Configurator
-     */
-    private $configurator;
-
-    /**
-     * @var CacheHelper
-     */
-    private $cache;
-
     public function __construct(
-        CoreParametersHelper $coreParametersHelper,
-        Configurator $configurator,
-        CacheHelper $cacheHelper)
-    {
-        $this->coreParametersHelper = $coreParametersHelper;
-        $this->configurator         = $configurator;
-        $this->cache                = $cacheHelper;
+        private CoreParametersHelper $coreParametersHelper,
+        private Configurator $configurator
+    ) {
     }
 
     /**
@@ -41,7 +22,7 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array<array<string,string>>
      */
-    public function getCommands()
+    public function getCommands(): array
     {
         return [
             'mautic:segments:update' => [
@@ -132,10 +113,10 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array<array<string,string>>
      */
-    public function getCommandsWithUrls()
+    public function getCommandsWithUrls(): array
     {
-        $baseUrl   = rtrim($this->coreParametersHelper->getParameter('site_url'), '/');
-        $config    = $this->coreParametersHelper->getParameter('cronfig');
+        $baseUrl   = rtrim($this->coreParametersHelper->get('site_url') ?? '', '/');
+        $config    = $this->coreParametersHelper->get('cronfig');
         $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
 
         if (empty($baseUrl)) {
@@ -157,14 +138,9 @@ class CronfigModel extends AbstractCommonModel
     /**
      * Save API key to the local.php config file if it's new. Returns the secret key.
      *
-     * @param string $apiKey
-     * @param string $namespace
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    public function saveApiKey($apiKey, $namespace = 'cronfig')
+    public function saveApiKey(string $apiKey, string $namespace = 'cronfig'): string
     {
         if (!$apiKey) {
             throw new \Exception('cronfig.api.key.empty');
@@ -174,7 +150,7 @@ class CronfigModel extends AbstractCommonModel
             throw new \Exception('mautic.config.notwritable');
         }
 
-        $config = $this->coreParametersHelper->getParameter($namespace);
+        $config = $this->coreParametersHelper->get($namespace);
 
         // Ensure the config has a secret key
         if (empty($config['secret_key'])) {
@@ -207,11 +183,6 @@ class CronfigModel extends AbstractCommonModel
                 );
             }
             $this->configurator->write();
-
-            // We must clear the application cache for M2 for the updated values to take effect. M3 doesn't need it.
-            if (method_exists($this->cache, 'clearContainerFile')) {
-                $this->cache->clearContainerFile();
-            }
         }
 
         return $secretKey;

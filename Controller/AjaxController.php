@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Controller;
 
 use Mautic\CoreBundle\Controller\AjaxController as CommonAjaxController;
@@ -7,14 +9,13 @@ use Mautic\CoreBundle\Helper\InputHelper;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class AjaxController extends CommonAjaxController
 {
-    protected function saveApiKeyAction(Request $request): JsonResponse
+    public function saveApiKeyAction(Request $request, CronfigModel $model, TranslatorInterface $translator): JsonResponse
     {
-        /** @var CronfigModel $model */
-        $model     = $this->getModel('cronfig');
-        $apiKey    = InputHelper::clean($request->request->get('apiKey'));
+        $apiKey    = InputHelper::clean($request->request->get('apiKey', ''));
         $namespace = InputHelper::clean($request->request->get('namespace', 'cronfig'));
         $response  = ['success' => 0];
 
@@ -22,7 +23,10 @@ class AjaxController extends CommonAjaxController
             $response['success']    = 1;
             $response['secret_key'] = $model->saveApiKey($apiKey, $namespace);
         } catch (\Exception $e) {
-            $this->addFlash('cronfig.config.not.updated', ['%error%' => $e->getMessage()], 'error');
+            $this->addFlash(
+                'error',
+                $this->translator->trans('cronfig.config.not.updated', ['%error%' => $e->getMessage()])
+            );
         }
 
         return $this->sendJsonResponse($response);
