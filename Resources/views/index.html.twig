@@ -22,7 +22,7 @@
     <script id="cronfig-config" type="text/javascript">
         document.cronfigConfig = {
             platform: 'mautic',
-            tasks: {{ commands|json_encode }},
+            tasks: {{ commands|json_encode|raw }},
             email: '{{ email }}',
             apiKey: '{{ apiKey }}',
             rememberApiKey: function(apiKey) {
