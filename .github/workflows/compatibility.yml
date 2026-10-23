@@ -2,7 +2,7 @@ name: Mautic compatibility
 on:
   pull_request:
   push:
-    branches: [5.x, 6.x, 7.x, master]
+    branches: [7.x]
   workflow_dispatch:
 permissions:
   contents: read
@@ -14,14 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - mautic: 5.2.11
-            php: '8.1'
-            mysql: '8.0'
-            sha256: fc1d741920c3e4d84e609f395aef84b43e9d287d8d73bf42dfb882092c5ffc07
-          - mautic: 6.0.9
-            php: '8.2'
-            mysql: '8.0'
-            sha256: aeb7bc2bd3eb6af4ccfca0969619e96dcab3a65a3fa84625234dc4885ce9380f
           - mautic: 7.2.1
             php: '8.3'
             mysql: '8.4'

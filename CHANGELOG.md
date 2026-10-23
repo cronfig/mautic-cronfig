@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.1.0 — unreleased
+## 4.0.0 — unreleased
 
-- Prepare shared compatibility with Mautic 5.2, 6.x and 7.2+ within 7.x.
+- Prepare compatibility with Mautic 7.2+ within 7.x, maintained on the `7.x` branch.
 - Advertise only installed console commands and use a bounded Messenger email worker.
 - Respect console exit codes and quoted arguments; retry with `--force` only when supported.
 - Compare secret keys without logging either key.

@@ -8,14 +8,14 @@ Find how to install this plugin and all related info in the [official documentat
 
 ## Compatibility
 
-Plugin 2.1.0 is prepared for Mautic 5.2, 6.x and 7.2+ (within Mautic 7). It uses one shared implementation and filters suggested tasks against the commands installed in each instance. Composer requires `mautic/core-lib: ^5.2 || ^6.0 || ^7.2`; use a PHP version supported by your Mautic version. Mautic 4 continues to use plugin 1.0.0.
+This branch prepares plugin 4.0.0 for Mautic 7.2+ within 7.x. Composer requires `mautic/core-lib: ^7.2`; use a PHP version supported by your Mautic release. Suggested tasks are filtered against the commands installed in each instance.
 
-| Plugin | Mautic | Compatibility fixtures |
-| --- | --- | --- |
-| 1.0.0 | 4.x | Legacy release; not changed here |
-| 2.1.0 (unreleased) | 5.2.x | 5.2.11 |
-| 2.1.0 (unreleased) | 6.x | 6.0.9 |
-| 2.1.0 (unreleased) | 7.2+ within 7.x | 7.2.1 |
+| Branch | Plugin | Mautic | Compatibility fixture |
+| --- | --- | --- | --- |
+| `master` | 1.0.0 | 4.x | Legacy release |
+| `5.x` | 2.1.0 (unreleased) | 5.2.x | 5.2.11 |
+| `6.x` | 3.0.0 (unreleased) | 6.x | 6.0.9 |
+| `7.x` | 4.0.0 (unreleased) | 7.2+ within 7.x | 7.2.1 |
 
 ### Upgrade notes
 
@@ -25,7 +25,7 @@ Review already scheduled tasks in Cronfig after a Mautic upgrade: filtering the 
 
 ### Validation
 
-The compatibility workflow installs empty official Mautic releases with verified checksums and tests PHP 8.1/8.2/8.3 respectively. It uses no production data or credentials and does not publish releases. Local rehearsal checks have also run with PHP 8.3.
+The compatibility workflow installs an empty official Mautic 7.2.1 release with a verified checksum. It uses no production data or credentials and does not publish releases. Local rehearsal checks have also run with PHP 8.3.
 
 Inside an isolated Mautic installation with this plugin installed, run:
 
@@ -36,4 +36,4 @@ phpunit --no-configuration --bootstrap plugins/CronfigBundle/Tests/Compatibility
 
 The smoke test boots the actual Mautic kernel, calls the registered public controller with in-memory test credentials, executes only console help/list operations, checks suggested tasks, and renders the Twig configuration with escaping checks. It never saves credentials or invokes cron tasks. It does not test the external Cronfig service or its browser dashboard; verify that integration before production rollout.
 
-To prepare a distribution locally, run `python3 tools/package.py --output /tmp/CronfigBundle-2.1.0.zip`. The allowlisted archive contains only plugin runtime files and documentation, under `CronfigBundle/`, with a companion SHA256 checksum. Packaging does not tag, upload or publish anything. Publish/tag only after the compatibility workflow passes and the dashboard/service integration is accepted.
+To prepare a distribution locally, run `python3 tools/package.py --output /tmp/CronfigBundle-4.0.0.zip`. The allowlisted archive contains only plugin runtime files and documentation, under `CronfigBundle/`, with a companion SHA256 checksum. Packaging does not tag, upload or publish anything. Publish/tag only after the compatibility workflow passes and the dashboard/service integration is accepted.
