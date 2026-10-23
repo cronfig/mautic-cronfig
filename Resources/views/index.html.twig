@@ -22,16 +22,16 @@
     <script id="cronfig-config" type="text/javascript">
         document.cronfigConfig = {
             platform: 'mautic',
-            tasks: {{ commands|json_encode|raw }},
-            email: '{{ email }}',
-            apiKey: '{{ apiKey }}',
+            tasks: {{ commands|json_encode(15)|raw }},
+            email: {{ email|json_encode(15)|raw }},
+            apiKey: {{ apiKey|json_encode(15)|raw }},
             rememberApiKey: function(apiKey) {
-                Mautic.ajaxActionRequest('plugin:cronfig:saveApiKey', 'apiKey=' + apiKey, function(response) {
+                Mautic.ajaxActionRequest('plugin:cronfig:saveApiKey', 'apiKey=' + encodeURIComponent(apiKey), function(response) {
                     if (typeof response.secret_key !== 'undefined') {
                         for (var i = 0; i < document.cronfigConfig.tasks.length; i++) {
-                            if (document.cronfigConfig.tasks[i].url.indexOf('?secret_key=') === -1) {
-                                document.cronfigConfig.tasks[i].url += '?secret_key=' + response.secret_key;
-                            }
+                            var taskUrl = new URL(document.cronfigConfig.tasks[i].url);
+                            taskUrl.searchParams.set('secret_key', response.secret_key);
+                            document.cronfigConfig.tasks[i].url = taskUrl.toString();
                         }
                     }
                 }, true);

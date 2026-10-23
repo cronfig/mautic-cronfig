@@ -3,7 +3,7 @@
 return [
     'name'        => 'Cronfig',
     'description' => 'Takes care of the cron jobs - makes your Mautic alive.',
-    'version'     => '2.0',
+    'version'     => '2.1.0',
     'author'      => 'Cronfig.io',
 
     'routes' => [

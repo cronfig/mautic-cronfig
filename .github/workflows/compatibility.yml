@@ -1,0 +1,75 @@
+name: Mautic compatibility
+on:
+  pull_request:
+  push:
+    branches: [5.x, 6.x, 7.x, master]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - mautic: 5.2.11
+            php: '8.1'
+            mysql: '8.0'
+            sha256: fc1d741920c3e4d84e609f395aef84b43e9d287d8d73bf42dfb882092c5ffc07
+          - mautic: 6.0.9
+            php: '8.2'
+            mysql: '8.0'
+            sha256: aeb7bc2bd3eb6af4ccfca0969619e96dcab3a65a3fa84625234dc4885ce9380f
+          - mautic: 7.2.1
+            php: '8.3'
+            mysql: '8.4'
+            sha256: 5c86cf1fe8b4f9818232ce8bb755760f502d47846706e9164d144865d031ecbd
+    services:
+      mysql:
+        image: mysql:${{ matrix.mysql }}
+        env:
+          MYSQL_ROOT_PASSWORD: test-only-password
+          MYSQL_DATABASE: mautic
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -ptest-only-password"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      APP_ENV: prod
+      APP_DEBUG: '0'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: plugin
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, curl, gd, imap, intl, mbstring, pdo_mysql, xml, zip
+          tools: phpunit:9.6.31
+          coverage: none
+      - name: Download verified Mautic release
+        env:
+          MAUTIC_VERSION: ${{ matrix.mautic }}
+          MAUTIC_SHA256: ${{ matrix.sha256 }}
+        run: |
+          curl --fail --location --retry 3 "https://github.com/mautic/mautic/releases/download/${MAUTIC_VERSION}/${MAUTIC_VERSION}.zip" -o mautic.zip
+          echo "${MAUTIC_SHA256}  mautic.zip" | sha256sum --check
+          unzip -q mautic.zip -d mautic
+      - name: Install empty test instance
+        working-directory: mautic
+        run: |
+          php bin/console mautic:install https://mautic.example.invalid --force --no-interaction \
+            --db_host=127.0.0.1 --db_port=3306 --db_name=mautic --db_user=root --db_password=test-only-password \
+            --admin_firstname=Test --admin_lastname=Admin --admin_username=admin \
+            --admin_email=admin@example.invalid --admin_password=Local-test-only-12345
+      - name: Install plugin and verify compatibility
+        run: |
+          mkdir -p mautic/plugins/CronfigBundle
+          rsync -a --exclude=.git plugin/ mautic/plugins/CronfigBundle/
+          cd mautic
+          php bin/console cache:clear --no-warmup
+          find plugins/CronfigBundle -name '*.php' -print0 | xargs -0 -n 1 php -l
+          php plugins/CronfigBundle/Tests/Compatibility/smoke.php
+          phpunit --no-configuration --bootstrap plugins/CronfigBundle/Tests/Compatibility/bootstrap.php plugins/CronfigBundle/Tests/Unit
