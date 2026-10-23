@@ -8,14 +8,14 @@ Find how to install this plugin and all related info in the [official documentat
 
 ## Compatibility
 
-Plugin 2.1.0 is prepared for Mautic 5.2, 6.x and 7.2+ (within Mautic 7). It uses one shared implementation and filters suggested tasks against the commands installed in each instance. Composer requires `mautic/core-lib: ^5.2 || ^6.0 || ^7.2`; use a PHP version supported by your Mautic version. Mautic 4 continues to use plugin 1.0.0.
+This branch prepares plugin 2.1.0 for Mautic 5.2+ within 5.x. Composer requires `mautic/core-lib: ^5.2`; use a PHP version supported by your Mautic release. Suggested tasks are filtered against the commands installed in each instance.
 
-| Plugin | Mautic | Compatibility fixtures |
-| --- | --- | --- |
-| 1.0.0 | 4.x | Legacy release; not changed here |
-| 2.1.0 (unreleased) | 5.2.x | 5.2.11 |
-| 2.1.0 (unreleased) | 6.x | 6.0.9 |
-| 2.1.0 (unreleased) | 7.2+ within 7.x | 7.2.1 |
+| Branch | Plugin | Mautic | Compatibility fixture |
+| --- | --- | --- | --- |
+| `master` | 1.0.0 | 4.x | Legacy release |
+| `5.x` | 2.1.0 (unreleased) | 5.2.x | 5.2.11 |
+| `6.x` | 3.0.0 (unreleased) | 6.x | 6.0.9 |
+| `7.x` | 4.0.0 (unreleased) | 7.2+ within 7.x | 7.2.1 |
 
 ### Upgrade notes
 
@@ -25,7 +25,7 @@ Review already scheduled tasks in Cronfig after a Mautic upgrade: filtering the 
 
 ### Validation
 
-The compatibility workflow installs empty official Mautic releases with verified checksums and tests PHP 8.1/8.2/8.3 respectively. It uses no production data or credentials and does not publish releases. Local rehearsal checks have also run with PHP 8.3.
+The compatibility workflow installs an empty official Mautic 5.2.11 release with a verified checksum. It uses no production data or credentials and does not publish releases. Local rehearsal checks have also run with PHP 8.3.
 
 Inside an isolated Mautic installation with this plugin installed, run:
 
