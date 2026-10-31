@@ -20,12 +20,12 @@ class AjaxController extends CommonAjaxController
         $response  = ['success' => 0];
 
         try {
-            $response['success']    = 1;
             $response['secret_key'] = $model->saveApiKey($apiKey, $namespace);
+            $response['success'] = 1;
         } catch (\Exception $e) {
             $this->addFlash(
                 'error',
-                $this->translator->trans('cronfig.config.not.updated', ['%error%' => $e->getMessage()])
+                $translator->trans('cronfig.config.not.updated', ['%error%' => $e->getMessage()])
             );
         }
 

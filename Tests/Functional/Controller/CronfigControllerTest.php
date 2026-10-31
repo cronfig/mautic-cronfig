@@ -25,7 +25,7 @@ final class CronfigControllerTest extends MauticMysqlTestCase
     {
         $this->client->request(Request::METHOD_GET, '/s/cronfig');
         Assert::assertTrue($this->client->getResponse()->isSuccessful());
-        Assert::assertStringContainsString('email: \'admin@yoursite.com\',', $this->client->getResponse()->getContent());
-        Assert::assertStringContainsString('apiKey: \'test.api.key\',', $this->client->getResponse()->getContent());
+        Assert::assertStringContainsString('email: "admin@yoursite.com",', $this->client->getResponse()->getContent());
+        Assert::assertStringContainsString('apiKey: "test.api.key",', $this->client->getResponse()->getContent());
     }
 }
