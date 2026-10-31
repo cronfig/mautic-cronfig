@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Controller;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Mautic\CoreBundle\Controller\CommonController;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArgvInput;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Output\BufferedOutput;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class PublicController extends CommonController
 {
-    /**
-     * @param string $command
-     */
-    public function triggerAction($command): Response
+    public function triggerAction(string $command, Request $request, KernelInterface $kernel, ContainerInterface $container, LoggerInterface $logger): Response
     {
         $response  = new Response();
-        $secretKey = $this->request->query->get('secret_key');
-        $namespace = $this->request->query->get('namespace', 'cronfig');
-        $config    = (new CoreParametersHelper($this->container))->getParameter($namespace);
-        $logger    = $this->get('monolog.logger.mautic');
+        $secretKey = $request->query->get('secret_key');
+        $namespace = $request->query->get('namespace', 'cronfig');
+        $config    = (new CoreParametersHelper($container))->get($namespace);
 
         $response->headers->set('Content-Type', 'text/plain');
 
@@ -42,47 +44,46 @@ class PublicController extends CommonController
             return $response;
         }
         
-        if ($config['secret_key'] !== $secretKey) {
+        if (!is_string($config['secret_key']) || !hash_equals($config['secret_key'], $secretKey)) {
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            $logger->log('error', 'Cronfig: secret key mismatch: '.$config['secret_key'].' != '.$secretKey);
+            $logger->log('error', 'Cronfig: secret key mismatch');
             $response->setContent('error: secret key mismatch');
 
             return $response;
         }
 
-        $command    = explode(' ', urldecode($command));
-        $errorCount = $this->request->get('error_count', 0);
-        $args       = array_merge(['console'], $command);
+        // Decode legacy Cronfig URLs, then let Symfony parse quoted arguments.
+        $command = trim(urldecode($command));
+        if ('' === $command) {
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            $response->setContent('error: command is missing');
 
-        if ($errorCount > 2) {
-            // Try to force the command if it failed 2 times before
-            $args[] = '--force';
+            return $response;
         }
 
         try {
-            $input  = new ArgvInput($args);
+            $input = new StringInput($command);
+            $input->setInteractive(false);
             $output = new BufferedOutput();
-            $app    = new Application($this->get('kernel'));
+            $app = new Application($kernel);
             $app->setAutoExit(false);
-            $app->run($input, $output);
 
-            $output = "SUCCESS\n\n{$output->fetch()}";
-        } catch (\Exception $exception) {
-            $output = $exception->getMessage();
-            $response->setStatusCode(500);
-            $logger->log('error', 'Cronfig: '.$exception->getMessage());
-        }
-
-        // Guess that the output is an error message
-        $errorWords = ['--force', 'exception'];
-
-        foreach ($errorWords as $errorWord) {
-            if (false !== strpos($output, $errorWord)) {
-                $response->setStatusCode(500);
+            // Only commands that define --force can retry with that option.
+            if ($request->query->getInt('error_count') > 2
+                && $app->find($input->getFirstArgument())->getDefinition()->hasOption('force')
+                && !$input->hasParameterOption('--force')) {
+                $input = new StringInput($command.' --force');
+                $input->setInteractive(false);
             }
-        }
 
-        $response->setContent($output);
+            $exitCode = $app->run($input, $output);
+            $response->setStatusCode(0 === $exitCode ? Response::HTTP_OK : Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response->setContent((0 === $exitCode ? "SUCCESS\n\n" : "ERROR\n\n").$output->fetch());
+        } catch (\Throwable $exception) {
+            $response->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR);
+            $response->setContent("ERROR\n\n".$exception->getMessage());
+            $logger->error('Cronfig: '.$exception->getMessage());
+        }
 
         return $response;
     }

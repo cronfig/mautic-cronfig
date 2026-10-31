@@ -1,39 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Model;
 
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Mautic\CoreBundle\Configurator\Configurator;
-use Mautic\CoreBundle\Helper\CacheHelper;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
-use Mautic\CoreBundle\Model\AbstractCommonModel;
 use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 
-class CronfigModel extends AbstractCommonModel
+final class CronfigModel
 {
-    /**
-     * @var CoreParametersHelper
-     */
-    protected $coreParametersHelper;
-
-    /**
-     * @var Configurator
-     */
-    private $configurator;
-
-    /**
-     * @var CacheHelper
-     */
-    private $cache;
-
     public function __construct(
-        CoreParametersHelper $coreParametersHelper,
-        Configurator $configurator,
-        CacheHelper $cacheHelper)
-    {
-        $this->coreParametersHelper = $coreParametersHelper;
-        $this->configurator         = $configurator;
-        $this->cache                = $cacheHelper;
+        private CoreParametersHelper $coreParametersHelper,
+        private Configurator $configurator,
+        private KernelInterface $kernel
+    ) {
     }
 
     /**
@@ -41,9 +25,9 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array<array<string,string>>
      */
-    public function getCommands()
+    public function getCommands(): array
     {
-        return [
+        $commands = [
             'mautic:segments:update' => [
                 'title'       => 'Update segments',
                 'description' => 'Updates the contacts in the segments. This command is required for basic Mautic functions.',
@@ -56,9 +40,9 @@ class CronfigModel extends AbstractCommonModel
                 'title'       => 'Trigger campaigns',
                 'description' => 'Triggers the campaign events. This command is required for basic Mautic functions.',
             ],
-            'mautic:emails:send' => [
+            'messenger:consume email --time-limit=50 --limit=100' => [
                 'title'       => 'Process emails',
-                'description' => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.',
+                'description' => 'Processes up to 100 queued emails for at most 50 seconds. Use only when the email transport is configured for queued delivery; do not also run another worker for the same queue.',
             ],
             'mautic:email:fetch' => [
                 'title'       => 'Fetch emails',
@@ -109,7 +93,7 @@ class CronfigModel extends AbstractCommonModel
                 'description' => 'Turn this on to fetch contacts from Zoho CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Zoho CRM.',
             ],
             'mautic:maintenance:cleanup --no-interaction --gdpr' => [
-                'title'       => 'GDPR complience cleanup',
+                'title'       => 'GDPR compliance cleanup',
                 'description' => 'Delete data to fulfill GDPR European regulation. This will delete leads that have been inactive for 3 years. WARNING: The deleted data cannot be recovered and it will change Mautic statistics.',
             ],
             'mautic:maintenance:cleanup --no-interaction' => [
@@ -121,10 +105,17 @@ class CronfigModel extends AbstractCommonModel
                 'description' => 'It may happen that some duplicate contacts will get into the system somehow. This task will find contacts with the same unique identifiers and merge them.',
             ],
             'mautic:unusedip:delete' => [
-                'title'       => 'Maintenance: Deduplicate contacts',
+                'title'       => 'Maintenance: Delete unused IP addresses',
                 'description' => 'Deletes IP addresses that are not used in any other database table. Those IP adresses usually belonged to contacts that were deleted already.',
             ],
         ];
+
+        // Optional plugins and removed core commands differ between Mautic versions.
+        $application = new Application($this->kernel);
+
+        return array_filter($commands, static function (string $command) use ($application): bool {
+            return $application->has(explode(' ', $command, 2)[0]);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -132,39 +123,36 @@ class CronfigModel extends AbstractCommonModel
      *
      * @return array<array<string,string>>
      */
-    public function getCommandsWithUrls()
+    public function getCommandsWithUrls(): array
     {
-        $baseUrl   = rtrim($this->coreParametersHelper->getParameter('site_url'), '/');
-        $config    = $this->coreParametersHelper->getParameter('cronfig');
-        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+        $baseUrl   = rtrim($this->coreParametersHelper->get('site_url') ?? '', '/');
+        $config    = $this->coreParametersHelper->get('cronfig');
+        $secretKey = rawurlencode(empty($config['secret_key']) ? '' : $config['secret_key']);
 
         if (empty($baseUrl)) {
             throw new PluginNotConfiguredException("Site URL is not configured. Please go to Mautic configuration and fill it in.");
         }
 
+        $commands = $this->getCommands();
+
         return array_map(
             function ($command, $commandConfig) use ($baseUrl, $secretKey) {
-                $encodedCommand = urlencode($command);
+                $encodedCommand = rawurlencode($command);
                 $commandConfig['url'] = "{$baseUrl}/cronfig/{$encodedCommand}?secret_key={$secretKey}";
 
                 return $commandConfig;
             },
-            array_keys($this->getCommands()),
-            $this->getCommands()
+            array_keys($commands),
+            $commands
         );
     }
 
     /**
      * Save API key to the local.php config file if it's new. Returns the secret key.
      *
-     * @param string $apiKey
-     * @param string $namespace
-     *
-     * @return string
-     *
      * @throws \Exception
      */
-    public function saveApiKey($apiKey, $namespace = 'cronfig')
+    public function saveApiKey(string $apiKey, string $namespace = 'cronfig'): string
     {
         if (!$apiKey) {
             throw new \Exception('cronfig.api.key.empty');
@@ -174,7 +162,7 @@ class CronfigModel extends AbstractCommonModel
             throw new \Exception('mautic.config.notwritable');
         }
 
-        $config = $this->coreParametersHelper->getParameter($namespace);
+        $config = $this->coreParametersHelper->get($namespace);
 
         // Ensure the config has a secret key
         if (empty($config['secret_key'])) {
@@ -207,11 +195,6 @@ class CronfigModel extends AbstractCommonModel
                 );
             }
             $this->configurator->write();
-
-            // We must clear the application cache for M2 for the updated values to take effect. M3 doesn't need it.
-            if (method_exists($this->cache, 'clearContainerFile')) {
-                $this->cache->clearContainerFile();
-            }
         }
 
         return $secretKey;

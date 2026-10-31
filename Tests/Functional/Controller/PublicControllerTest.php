@@ -33,7 +33,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
         Assert::assertCount(2, $configParams);
 
         $secretKey = $configParams['secret_key'];
-        $url = "/cronfig/mautic%3Acampaigns%3Atrigger?secret_key={$secretKey}&namespace={$namespace}";
+        $url = "/cronfig/help%20mautic%3Acampaigns%3Atrigger?secret_key={$secretKey}&namespace={$namespace}";
 
         Assert::assertSame('12345abc', $configParams['api_key']);
         Assert::assertNotEmpty($secretKey);
@@ -43,7 +43,7 @@ final class PublicControllerTest extends MauticMysqlTestCase
 
         $content = $this->client->getResponse()->getContent();
 
-        Assert::assertStringStartsWith('SUCCESS', $content, print_r($configParams, true).$url);
+        Assert::assertStringStartsWith('SUCCESS', $content, 'Console help should succeed');
         Assert::assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode(), $content);
 
         // Cleanup.

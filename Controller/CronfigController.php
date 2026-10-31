@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MauticPlugin\CronfigBundle\Controller;
 
 use Mautic\CoreBundle\Controller\CommonController;
@@ -7,30 +9,16 @@ use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\UserHelper;
 use Mautic\IntegrationsBundle\Exception\PluginNotConfiguredException;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class CronfigController extends CommonController
 {
     /**
      * Display the Cronfig Login/Dashboard
-     * 
-     * @return JsonResponse|Response
      */
-    public function indexAction()
+    public function indexAction(CronfigModel $model, CoreParametersHelper $coreParametersHelper, UserHelper $userHelper): Response
     {
-        /** @var CronfigModel $model */
-        $model = $this->getModel('cronfig');
-
-        /** @var CoreParametersHelper $coreParametersHelper */
-        $coreParametersHelper = $this->get('mautic.helper.core_parameters');
-
-        /** @var UserHelper $userHelper */
-        $userHelper = $this->get('mautic.helper.user');
-        
-        $config   = $coreParametersHelper->getParameter('cronfig');
-        $email    = $userHelper->getUser()->getEmail();
-        $apiKey   = empty($config['api_key']) ? '' : $config['api_key'];
+        $config   = $coreParametersHelper->get('cronfig');
         $error    = null;
         $commands = [];
 
@@ -45,10 +33,10 @@ class CronfigController extends CommonController
                 'title'    => 'cronfig.title',
                 'error'    => $error,
                 'commands' => $commands,
-                'email'    => $email,
-                'apiKey'   => $apiKey,
+                'email'    => $userHelper->getUser()->getEmail(),
+                'apiKey'   => $config['api_key'] ?? '',
             ],
-            'contentTemplate' => 'CronfigBundle:Cronfig:index.html.php',
+            'contentTemplate' => '@Cronfig/index.html.twig',
             'passthroughVars' => [
                 'activeLink'    => '#cronfig',
                 'mauticContent' => 'cronfig',
