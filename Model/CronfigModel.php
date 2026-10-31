@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace MauticPlugin\CronfigBundle\Model;
 
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Mautic\CoreBundle\Configurator\Configurator;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use Mautic\CoreBundle\Helper\EncryptionHelper;
@@ -13,7 +15,8 @@ final class CronfigModel
 {
     public function __construct(
         private CoreParametersHelper $coreParametersHelper,
-        private Configurator $configurator
+        private Configurator $configurator,
+        private KernelInterface $kernel
     ) {
     }
 
@@ -24,7 +27,7 @@ final class CronfigModel
      */
     public function getCommands(): array
     {
-        return [
+        $commands = [
             'mautic:segments:update' => [
                 'title'       => 'Update segments',
                 'description' => 'Updates the contacts in the segments. This command is required for basic Mautic functions.',
@@ -37,9 +40,9 @@ final class CronfigModel
                 'title'       => 'Trigger campaigns',
                 'description' => 'Triggers the campaign events. This command is required for basic Mautic functions.',
             ],
-            'mautic:emails:send' => [
+            'messenger:consume email --time-limit=50 --limit=100' => [
                 'title'       => 'Process emails',
-                'description' => 'Processes the emails in the queue. This command is needed if you configure the emails to be processed in a queue.',
+                'description' => 'Processes up to 100 queued emails for at most 50 seconds. Use only when the email transport is configured for queued delivery; do not also run another worker for the same queue.',
             ],
             'mautic:email:fetch' => [
                 'title'       => 'Fetch emails',
@@ -90,7 +93,7 @@ final class CronfigModel
                 'description' => 'Turn this on to fetch contacts from Zoho CRM. It is important to configure the period to 15 minutes for it to work correctly. Use the campaign action to push contacts to Zoho CRM.',
             ],
             'mautic:maintenance:cleanup --no-interaction --gdpr' => [
-                'title'       => 'GDPR complience cleanup',
+                'title'       => 'GDPR compliance cleanup',
                 'description' => 'Delete data to fulfill GDPR European regulation. This will delete leads that have been inactive for 3 years. WARNING: The deleted data cannot be recovered and it will change Mautic statistics.',
             ],
             'mautic:maintenance:cleanup --no-interaction' => [
@@ -102,10 +105,17 @@ final class CronfigModel
                 'description' => 'It may happen that some duplicate contacts will get into the system somehow. This task will find contacts with the same unique identifiers and merge them.',
             ],
             'mautic:unusedip:delete' => [
-                'title'       => 'Maintenance: Deduplicate contacts',
+                'title'       => 'Maintenance: Delete unused IP addresses',
                 'description' => 'Deletes IP addresses that are not used in any other database table. Those IP adresses usually belonged to contacts that were deleted already.',
             ],
         ];
+
+        // Optional plugins and removed core commands differ between Mautic versions.
+        $application = new Application($this->kernel);
+
+        return array_filter($commands, static function (string $command) use ($application): bool {
+            return $application->has(explode(' ', $command, 2)[0]);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
@@ -117,21 +127,23 @@ final class CronfigModel
     {
         $baseUrl   = rtrim($this->coreParametersHelper->get('site_url') ?? '', '/');
         $config    = $this->coreParametersHelper->get('cronfig');
-        $secretKey = empty($config['secret_key']) ? '' : $config['secret_key'];
+        $secretKey = rawurlencode(empty($config['secret_key']) ? '' : $config['secret_key']);
 
         if (empty($baseUrl)) {
             throw new PluginNotConfiguredException("Site URL is not configured. Please go to Mautic configuration and fill it in.");
         }
 
+        $commands = $this->getCommands();
+
         return array_map(
             function ($command, $commandConfig) use ($baseUrl, $secretKey) {
-                $encodedCommand = urlencode($command);
+                $encodedCommand = rawurlencode($command);
                 $commandConfig['url'] = "{$baseUrl}/cronfig/{$encodedCommand}?secret_key={$secretKey}";
 
                 return $commandConfig;
             },
-            array_keys($this->getCommands()),
-            $this->getCommands()
+            array_keys($commands),
+            $commands
         );
     }
 
