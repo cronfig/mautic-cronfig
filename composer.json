@@ -2,14 +2,22 @@
     "name": "cronfig/mautic-cronfig",
     "description": "Cronfig",
     "type": "mautic-plugin",
-    "version": "2.0",
+    "version": "4.0.0",
     "license": "GPL-3.0-or-later",
-    "keywords": ["mautic","plugin","cronfig","cron","config","cronjob","cronjobs"],
+    "keywords": [
+        "mautic",
+        "plugin",
+        "cronfig",
+        "cron",
+        "config",
+        "cronjob",
+        "cronjobs"
+    ],
     "extra": {
         "install-directory-name": "CronfigBundle"
     },
     "require": {
-        "php": ">=8.0.0",
-        "mautic/core-lib": "^5.0"
+        "php": ">=8.2",
+        "mautic/core-lib": "^7.2"
     }
 }

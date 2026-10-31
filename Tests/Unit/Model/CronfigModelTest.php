@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace MauticPlugin\CronfigBundle\Tests\Unit\Model;
 
 use Mautic\CoreBundle\Configurator\Configurator;
-use Mautic\CoreBundle\Helper\CacheHelper;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Console\CommandLoader\FactoryCommandLoader;
+use Symfony\Component\Console\Command\Command;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use MauticPlugin\CronfigBundle\Model\CronfigModel;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -24,9 +27,9 @@ final class CronfigModelTest extends TestCase
     private MockObject $configurator;
 
     /**
-     * @var CacheHelper&MockObject
+     * @var KernelInterface&MockObject
      */
-    private MockObject $cacheHelper;
+    private MockObject $kernel;
 
     private CronfigModel $cronfigModel;
 
@@ -34,11 +37,18 @@ final class CronfigModelTest extends TestCase
     {
         $this->coreParametersHelper = $this->createMock(CoreParametersHelper::class);
         $this->configurator         = $this->createMock(Configurator::class);
-        $this->cacheHelper          = $this->createMock(CacheHelper::class);
+        $this->kernel = $this->createMock(KernelInterface::class);
+        $container = new ContainerBuilder();
+        $container->set('console.command_loader', new FactoryCommandLoader([
+            'mautic:segments:update' => static fn () => new Command('mautic:segments:update'),
+            'messenger:consume' => static fn () => new Command('messenger:consume'),
+        ]));
+        $this->kernel->method('getContainer')->willReturn($container);
+        $this->kernel->method('getBundles')->willReturn([]);
         $this->cronfigModel         = new CronfigModel(
             $this->coreParametersHelper,
             $this->configurator,
-            $this->cacheHelper
+            $this->kernel
         );
     }
 
@@ -52,6 +62,8 @@ final class CronfigModelTest extends TestCase
     {
         $commands = $this->cronfigModel->getCommands();
 
+        $this->assertCount(2, $commands);
+
         foreach ($commands as $command => $config) {
             $this->assertTrue(!empty($config['title']));
             $this->assertTrue(!empty($config['description']));
@@ -60,17 +72,17 @@ final class CronfigModelTest extends TestCase
 
     public function testGetCommandsWithUrls(): void
     {
-        $this->coreParametersHelper->method('get')
-            ->withConsecutive(
-                ['site_url'],
-                ['cronfig']
-            )
-            ->willReturnOnConsecutiveCalls(
-                'https://cronfig.io/',
-                ['secret_key' => 'some-secret']
-            );
+        $this->coreParametersHelper->method('get')->willReturnCallback(
+            static fn (string $name) => match ($name) {
+                'site_url' => 'https://cronfig.io/',
+                'cronfig' => ['secret_key' => 'some-secret'],
+                default => null,
+            }
+        );
 
         $commands = $this->cronfigModel->getCommandsWithUrls();
+
+        $this->assertCount(2, $commands);
 
         foreach ($commands as $command => $config) {
             $this->assertTrue(!empty($config['title']));
